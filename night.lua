@@ -227,7 +227,7 @@ night:addCallback("init", function(player)
     "Homing Skulls",
     "Charge up while holding the button, then release multiple skulls that home into enemies for 200% damage",
     sprSkills, 4,
-    16 * 60
+    12 * 60
     )
 
 end)
@@ -244,7 +244,7 @@ night:addCallback("scepter", function(player)
     "Red Hell Skulls",
     "Charge up while holding the button, then release multiple skulls that home into enemies for 200% damage and create scythes that deal 150% damage per second",
     sprSkills, 5,
-    16 * 60
+    12 * 60
     )
 end)
 

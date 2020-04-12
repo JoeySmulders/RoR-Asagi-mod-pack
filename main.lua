@@ -2,6 +2,9 @@
 ------ main.lua
 ---- This file is automatically loaded by RoRML
 
--- Load the other Lua scripts
+-- Load Survivor scripts
 require("night")
 
+-- Load Item scripts
+require("Items/wings")
+require("Items/soul_devourer")
