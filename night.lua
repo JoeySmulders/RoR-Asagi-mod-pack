@@ -1,9 +1,3 @@
--- See if you can do this in a way that isn't just stealing starstorms code
-pobj = {}
-for _, parentObject in ipairs(ParentObject.findAll("Vanilla")) do
-	pobj[parentObject:getName()] = parentObject
-end
-
 -- Add the Night character
 local night = Survivor.new("Night")
 

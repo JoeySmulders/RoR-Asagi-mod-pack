@@ -36,7 +36,7 @@ registercallback("onHit", function(bullet, hit, hitx, hity)
 end)
 
 item:setLog{
-    group = "common",
+    group = "uncommon",
     description = "",
     story = "",
     destination = "",
