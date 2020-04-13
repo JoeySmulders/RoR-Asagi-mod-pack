@@ -22,7 +22,7 @@ registercallback("onHit", function(bullet, hit)
                 hit:set("hp", hit:get("hp") + bullet:get("damage"))
             end
 
-            local timer = (1 + count) * 60
+            local timer = (1 + count) * 60 -- Stacking item increases delay by 1 second per item
 
             damageTable[timer] = bullet:get("damage")
         end
@@ -39,7 +39,7 @@ registercallback("onPlayerStep", function(player)
         tableCount = tableCount + 1
     end
 
-    -- TODO: Change it so it only checks once a second for these values instead of every fucking frame
+    -- TODO: Change it so it only checks once a second for these values instead of every fucking frame (hard to do with current table setup)
     if count > 0 then
         if tableCount > 0 then
             for timer, value in pairs(damageTable) do
@@ -47,9 +47,11 @@ registercallback("onPlayerStep", function(player)
                     if player:get("shield") > 0 then
                         player:set("shield", player:get("shield") - value)
                         player:set("shield_cooldown", 7 * 60)
+                        misc.damage(value, player.x, player.y, false, Color.ORANGE)
                     else
                         player:set("hp", player:get("hp") - value)
                         player:set("shield_cooldown", 7 * 60)
+                        misc.damage(value, player.x, player.y - 10, false, Color.ORANGE)
                     end
                 else
                     timer = timer - 1
@@ -62,7 +64,7 @@ registercallback("onPlayerStep", function(player)
     end
 end)
 
--- clean up the damage table on death so they don't store it into the next game
+-- clean up the damage table on death so they don't store it into the next game or level
 registercallback("onPlayerDeath", function(player)
     damageTable = {}
 end)
