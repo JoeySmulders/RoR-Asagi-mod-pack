@@ -25,6 +25,7 @@ require("Items/broken_lan_cable")
 require("Items/soul_devourer")
 require("Items/see-through_log")
 require("Items/blood_economy")
+require("Items/thieves_hat")
 
 -- Rare
 require("Items/punching_bag")
