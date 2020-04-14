@@ -13,7 +13,6 @@ item:setTier("common")
 local objStar = Object.new("Star")
 objStar.sprite = Sprite.load("Star", "Items/sprites/star", 1, 5, 5)
 objStar.depth = 1
-local enemies = pobj.enemies
 local rotationSpeed = 5
 
 -- Star creation and variables

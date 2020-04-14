@@ -60,7 +60,6 @@ night.endingQuote = "god i'm cute"
 local objScythe = Object.new("NightScythe")
 objScythe.sprite = Sprite.load("NightScythe", "Night/scythe", 1, 5, 6)
 objScythe.depth = 0.1
-local enemies = pobj.enemies
 
 -- Scythe creation and variables
 objScythe:addCallback("create", function(objScythe)

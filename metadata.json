@@ -1,7 +1,7 @@
 {
-    "name": "Asagi Mod Pack",
-    "description": "A mod pack featuring a new survivor and new items",
+    "name": "Turbo Edition",
+    "description": "A mod pack featuring a new survivor and new items \n\nFlags:\n\n-TE_no_survivors: Disables new survivors\n-TE_no_items: Disables new items\n-TE_no_elites: Disables new Elite Types\n-TE_no_artifacts: Disables new Artifacts",
 	"internalname": "Turbo Edition",
-    "version": "1",
-    "author": "Asagi", "mpcompat": true
+    "version": "0.1",
+    "author": "Joey Asagiri", "mpcompat": true
 }

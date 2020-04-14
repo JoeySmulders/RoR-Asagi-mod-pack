@@ -4,13 +4,9 @@
 local item = Item("Big Scythe")
 
 item.pickupText = "Deal massive damage to a random enemy"
-
 item.sprite = Sprite.load("Items/sprites/Big_scythe", 1, 18, 15)
-
 item:setTier("use")
-
 item.isUseItem = true
-
 item.useCooldown = 30
 
 ItemPool.find("enigma", "vanilla"):add(item)
@@ -24,18 +20,18 @@ item:addCallback("use", function(player, embryo)
 
     -- Get the current enemies and take a random one to attack
     for i = 1, count, 1 do
-        local enemies = pobj.enemies:findAll()
+        local currentEnemies = enemies:findAll()
      
-        if enemies then
+        if currentEnemies then
             local enemyCount = 0
 
-            for _, enemy in ipairs(enemies) do
+            for _, enemy in ipairs(currentEnemies) do
                 enemyCount = enemyCount + 1
             end
 
             local enemyTarget = math.random(1, enemyCount)
 
-            for _, enemy in ipairs(enemies) do
+            for _, enemy in ipairs(currentEnemies) do
                 if _ == enemyTarget then
                     player:fireBullet(enemy.x, enemy.y, 0, 0.1, 1000, nil, DAMAGER_NO_PROC)
                 end

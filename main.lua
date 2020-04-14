@@ -1,37 +1,49 @@
--- This stuff here is just stolen from Starstorm, sorry Neik (this stuff should just be part of the API tho ;p)
-pobj = {}
-for _, parentObject in ipairs(ParentObject.findAll("Vanilla")) do
-	pobj[parentObject:getName()] = parentObject
-end
+enemies = ParentObject.find("Enemies", "Vanilla")
+elite = EliteType.findAll("Vanilla")
 
-obj = {}
-for _, object in ipairs(Object.findAll("Vanilla")) do
-	obj[object:getName()] = object
-end
+originalElites = {
+	elite.Blazing,
+	elite.Overloading,
+	elite.Frenzied,
+	elite.Leeching,
+	elite.Volatile
+}
 
 ------ main.lua
 ---- This file is automatically loaded by RoRML
 
 -- Load Survivor scripts
-require("night")
+if not modloader.checkFlag("TE_no_survivors") then
+	require("night")
+end
 
 -- Load Item scripts
+if not modloader.checkFlag("TE_no_items") then
+	-- Common
+	require("Items/wings")
+	require("Items/broken_lan_cable")
+	require("Items/see-through_log")
 
--- Common
-require("Items/wings")
-require("Items/broken_lan_cable")
+	-- Uncommon
+	require("Items/soul_devourer")
+	require("Items/blood_economy")
+	require("Items/thieves_hat")
 
--- Uncommon
-require("Items/soul_devourer")
-require("Items/see-through_log")
-require("Items/blood_economy")
-require("Items/thieves_hat")
+	-- Rare
+	require("Items/punching_bag")
 
--- Rare
-require("Items/punching_bag")
+	-- Use
+	require("Items/big_scythe")
+	require("Items/squeaky_toy")
+end
 
--- Use
-require("Items/big_scythe")
+-- Load Elite Type scripts
+if not modloader.checkFlag("TE_no_elites") then
+	require("Elites/freeze")
+end
 
 -- Load Artifact scripts
-require("Artifacts/brain")
+if not modloader.checkFlag("TE_no_artifacts") then
+	require("Artifacts/brain")
+	require("Artifacts/worms")
+end

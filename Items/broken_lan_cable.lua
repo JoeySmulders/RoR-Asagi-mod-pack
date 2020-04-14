@@ -9,7 +9,7 @@ item.sprite = Sprite.load("Items/sprites/LAN_cable", 1, 18, 15)
 
 item:setTier("common")
 
-local damageTable = {}
+local damageTable = {} -- For the love of god replace this with a getData setup jesus fuck
 
 registercallback("onHit", function(bullet, hit)
     -- If the player takes damage, delay it
