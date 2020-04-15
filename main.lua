@@ -31,6 +31,7 @@ if not modloader.checkFlag("TE_no_items") then
 
 	-- Rare
 	require("Items/punching_bag")
+	require("Items/140_leaf_clover")
 
 	-- Use
 	require("Items/big_scythe")

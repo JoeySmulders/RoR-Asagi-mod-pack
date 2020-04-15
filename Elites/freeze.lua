@@ -11,6 +11,9 @@ local wormBody = Object.find("WormBody", "Vanilla")
 
 magmaWorm.eliteTypes:add(elite.Freezing)
 
+local freezeTimer = 2 * 60
+local freezeImmune = 5 * 60
+
 -- Adding a new elite type for magma worm seems to enable the rest of the original elites for them too, disable them
 for i, eliteType in ipairs(originalElites) do
     if eliteType ~= elite.Overloading then
@@ -18,21 +21,58 @@ for i, eliteType in ipairs(originalElites) do
     end
 end
 
+registercallback("onActorInit", function(player)
+    if type(player) == "PlayerInstance" then
+        player:getData().frozen = 0
+        player:getData().frozenTimer = 0
+    end
+end)
+
+
 registercallback("onPlayerStep", function(player)
+    log(player:get("activity_type"))
     -- Check for collision with wormhead or wormbody if they are freezing
     for i, worm in ipairs(wormHead:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
         if player:collidesWith(worm, player.x, player.y) then
-            player:getData().frozen = 1
+            if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
+                player:getData().frozen = 1
+                player:getData().frozenTimer = freezeTimer
+            end
         end
     end
     for i, worm in ipairs(wormBody:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
         if player:collidesWith(worm, player.x, player.y) then
-            player:getData().frozen = 1
+            if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
+                player:getData().frozen = 1
+                player:getData().frozenTimer = freezeTimer
+            end
         end
     end
 
-    -- Insert code to freeze player
+    --TODO: Fix bug where getting frozen while on rope requires you to jump after being unfrozen (game still thinks you are climbing)
+
+    -- Freezes the player, making them drop to the floor and stuck in the idle animation for x amount of seconds
     if player:getData().frozen == 1 then
-        
+        player:set("disable_ai", 1)
+
+        if not player:collidesMap(player.x, player.y + 5) then
+            player.y = player.y + 5
+        end
+
+        player.sprite = player:getAnimation("idle")
+        player:getData().frozenTimer = player:getData().frozenTimer - 1
+
+        if player:getData().frozenTimer <= 0 then
+            player:getData().frozen = 0 
+            player:set("disable_ai", 0)
+            player:getData().frozenTimer = freezeTimer + freezeImmune -- Make player immune to ice for a few seconds after recovering
+        end
+    end
+
+    -- Tick down the freeze immunity
+    if player:getData().frozen == 0 then
+        if player:getData().frozenTimer >= freezeTimer then
+            player:getData().frozenTimer = player:getData().frozenTimer - 1
+        end
     end
 end)

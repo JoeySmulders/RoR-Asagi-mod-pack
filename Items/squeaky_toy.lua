@@ -21,7 +21,12 @@ local team = ""
 -- When the player picks up the item, check if spite is enabled and change the team of spite bombs
 item:addCallback("pickup", function(player)
     playerInstance = player
-    local count = player:countItem(item) 
+
+    local count = 1
+
+    for i, player in ipairs(misc.players) do
+        count = player:countItem(item)
+    end
 
     if count == 1 then
         if spite.active == true then
@@ -38,10 +43,24 @@ item:addCallback("pickup", function(player)
 end)
 
 registercallback("onStep", function()
-    if playerInstance then
+    local itemCount = 0
+
+    for i, player in ipairs(misc.players) do
+        if player:get("dead") <= 0 then
+            itemCount = player:countItem(item)
+            if player:getData().spiteTeam ~= "" then
+                playerInstance = player
+            end
+        end
+    end
+
+    if itemCount > 0 then
         for i, instance in ipairs(spiteBombs:findAll()) do
-            instance:set("team", playerInstance:getData().spiteTeam)
-            instance:set("damage", instance:get("damage") * playerInstance:countItem(item)) -- MP stuff: make it count from every player
+            if instance:getData().adjusted ~= true then
+                instance:set("team", playerInstance:getData().spiteTeam)
+                instance:set("damage", instance:get("damage") * itemCount)
+                instance:getData().adjusted = true
+            end
         end
     end
 end)
