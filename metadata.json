@@ -1,7 +1,14 @@
 {
     "name": "Turbo Edition",
-    "description": "A mod pack featuring a new survivor and new items \n\nFlags:\n\n-TE_no_survivors: Disables new survivors\n-TE_no_items: Disables new items\n-TE_no_elites: Disables new Elite Types\n-TE_no_artifacts: Disables new Artifacts",
+    "description": "Turbo Edition is a content pack that aims to add many new items, survivors, artifacts and elite types to Risk of Rain \n\nFlags:\n\n-TE_no_survivors: Disables new survivors\n-TE_no_items: Disables new items\n-TE_no_elites: Disables new Elite Types\n-TE_no_artifacts: Disables new Artifacts",
 	"internalname": "Turbo Edition",
     "version": "0.1",
-    "author": "Joey Asagiri", "mpcompat": true
+    "author": "Joey Asagiri", "mpcompat": true,
+    "dependencies": [
+        {
+            "name": "Starstorm",
+            "version": "1.0.0",
+            "optional": true
+        }
+    ]
 }

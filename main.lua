@@ -47,4 +47,10 @@ if not modloader.checkFlag("TE_no_artifacts") then
 	require("Artifacts/spiter")
 	require("Artifacts/worms")
 	require("Artifacts/turbo")
+	require("Artifacts/pain")
+end
+
+-- Starstorm stuff
+if modloader.checkMod("StarStorm") then
+	require("rules")
 end

@@ -12,15 +12,21 @@ artifact.loadoutText = "Game is 20% faster"
 
 local speedMultiplier = 1.2
 
+-- Starstorm rules
+registercallback("postSelection", function()
+    speedMultiplier = Rule.getSetting(Rule.find("Turbo Artifact speed"))
+end)
+
 -- Make the timer go faster
 registercallback("onStep", function(actor)
     if artifact.active then
-        if misc.director:getAlarm(0) <= (60 - ( 60/ speedMultiplier)) then
+        if misc.director:getAlarm(0) <= (60 - ( 60 / speedMultiplier)) then
             misc.director:setAlarm(0, 1)
         end
     end
 end)
 
+-- TODO: This is called before postSelection for players, do player stuff afterwards
 -- Change actor variables to be faster
 registercallback("onActorInit", function(actor)
     if artifact.active then
@@ -30,7 +36,7 @@ registercallback("onActorInit", function(actor)
         actor:set("pHmax", actor:get("pHmax") * speedMultiplier)
         
         if actor:get("pVMax") then
-            actor:set("pVmax", actor:get("pVmax") * speedMultiplier) -- This one is weird and doesn't work that well when increased
+            actor:set("pVmax", actor:get("pVmax") * speedMultiplier) -- This one is weird and doesn't work that well when increased (? for some reason now it does work????)
         end
 
         actor:set("speed", actor:get("speed") * speedMultiplier)
