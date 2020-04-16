@@ -31,11 +31,10 @@ if not modloader.checkFlag("TE_no_items") then
 
 	-- Rare
 	require("Items/punching_bag")
-	require("Items/140_leaf_clover")
+	require("Items/ultra_clover")
 
 	-- Use
 	require("Items/big_scythe")
-	require("Items/squeaky_toy")
 end
 
 -- Load Elite Type scripts
@@ -45,6 +44,7 @@ end
 
 -- Load Artifact scripts
 if not modloader.checkFlag("TE_no_artifacts") then
-	require("Artifacts/brain")
+	require("Artifacts/spiter")
 	require("Artifacts/worms")
+	require("Artifacts/turbo")
 end

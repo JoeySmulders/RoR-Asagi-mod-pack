@@ -30,7 +30,6 @@ end)
 
 
 registercallback("onPlayerStep", function(player)
-    log(player:get("activity_type"))
     -- Check for collision with wormhead or wormbody if they are freezing
     for i, worm in ipairs(wormHead:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
         if player:collidesWith(worm, player.x, player.y) then
@@ -63,7 +62,7 @@ registercallback("onPlayerStep", function(player)
         player:getData().frozenTimer = player:getData().frozenTimer - 1
 
         if player:getData().frozenTimer <= 0 then
-            player:getData().frozen = 0 
+            player:getData().frozen = 0
             player:set("disable_ai", 0)
             player:getData().frozenTimer = freezeTimer + freezeImmune -- Make player immune to ice for a few seconds after recovering
         end

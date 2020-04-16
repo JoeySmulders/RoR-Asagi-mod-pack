@@ -1,7 +1,7 @@
--- 140_leaf_clover.lua
--- Rare item that increases clover stack by 5 (10 if you have none, 7.5 otherwise)
+-- ultra_clover.lua
+-- Rare item that increases clover stack by 5 (10% if you have none, 7.5% otherwise)
 
-local item = Item("140 Leaf Clover")
+local item = Item("168 Leaf Clover")
 
 item.pickupText = "Elite enemies drop items far more often"
 
