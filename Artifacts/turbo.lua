@@ -14,36 +14,52 @@ local speedMultiplier = 1.2
 
 -- Starstorm rules
 registercallback("postSelection", function()
-    speedMultiplier = Rule.getSetting(Rule.find("Turbo Artifact speed"))
+    if artifact.active then
+        speedMultiplier = Rule.getSetting(Rule.find("Turbo Artifact speed"))
+        for i, player in ipairs(misc.players) do
+            turbo(player)
+        end
+    end
 end)
 
 -- Make the timer go faster
-registercallback("onStep", function(actor)
+registercallback("onStep", function()
     if artifact.active then
         if misc.director:getAlarm(0) <= (60 - ( 60 / speedMultiplier)) then
             misc.director:setAlarm(0, 1)
         end
+        -- Forced to set player speed in onStep due to weird init stuff
+        for i, player in ipairs(misc.players) do
+            if not player:getData().speedSet and player:get("pHmax") ~= 0 then
+                player:set("pHmax", player:get("pHmax") * speedMultiplier)
+                player:getData().speedSet = true
+            end
+        end
     end
 end)
 
--- TODO: This is called before postSelection for players, do player stuff afterwards
 -- Change actor variables to be faster
 registercallback("onActorInit", function(actor)
     if artifact.active then
-        actor:set("attack_speed", actor:get("attack_speed") * speedMultiplier) 
-        --actor.spriteSpeed = actor.spriteSpeed * speedMultiplier 
-        
-        actor:set("pHmax", actor:get("pHmax") * speedMultiplier)
-        
-        if actor:get("pVMax") then
-            actor:set("pVmax", actor:get("pVmax") * speedMultiplier) -- This one is weird and doesn't work that well when increased (? for some reason now it does work????)
-        end
-
-        actor:set("speed", actor:get("speed") * speedMultiplier)
-
-        if type(actor) == "PlayerInstance" then
-            actor:set("hp_regen", actor:get("hp_regen") * speedMultiplier)
-            actor:set("pGravity1", actor:get("pGravity1") * speedMultiplier)
+        -- If starstorm isn't loaded, then apply this to all actors, otherwise apply players through postSelection
+        if type(actor) ~= "PlayerInstance" or not modloader.checkMod("StarStorm") then
+            turbo(actor)
         end
     end
 end)
+
+-- Function that changes variables for actors
+function turbo (actor)
+    actor:set("attack_speed", actor:get("attack_speed") * speedMultiplier) 
+    --actor.spriteSpeed = actor.spriteSpeed * speedMultiplier 
+    actor:set("pHmax", actor:get("pHmax") * speedMultiplier) -- For some reasons this is set to fucking 0 during postSelection for players...
+
+    if actor:get("pVMax") then
+        actor:set("pVmax", actor:get("pVmax") * speedMultiplier)
+    end
+
+    actor:set("speed", actor:get("speed") * speedMultiplier)
+    actor:set("hp_regen", actor:get("hp_regen") * speedMultiplier)
+    --actor:set("pGravity1", actor:get("pGravity1") * speedMultiplier) -- Changing gravity has the wrong effect and doesn't actually speed up anything, just makes you jump lower
+    --actor:set("pGravity2", actor:get("pGravity2") * speedMultiplier)
+end
