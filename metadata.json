@@ -6,8 +6,8 @@
     "author": "Joey Asagiri", "mpcompat": true,
     "dependencies": [
         {
-            "name": "Starstorm",
-            "version": "1.0.0",
+            "name": "StarStorm",
+            "version": "1.8.3",
             "optional": true
         }
     ]

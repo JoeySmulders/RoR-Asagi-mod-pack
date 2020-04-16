@@ -62,7 +62,7 @@ registercallback("onPlayerStep", function(player)
                 direction = direction + 45
             end
             -- Stacking item reduces cooldown by 1 second, to 1 second max.
-            player:set("log-star_timer", (11 - count) * 60)
+            player:set("log-star_timer", (11 - math.min(count, 10)) * 60)
         end
 
         player:set("log-star_timer", player:get("log-star_timer") - 1)

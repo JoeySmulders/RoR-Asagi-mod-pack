@@ -5,7 +5,7 @@ local item = Item("Angel Wings")
 
 item.pickupText = "Increases damage while in the air by 10%"
 
-item.sprite = Sprite.load("Items/sprites/Angel_wings", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/Angel_wings", 1, 9, 9)
 
 item:setTier("common")
 

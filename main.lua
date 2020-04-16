@@ -53,4 +53,5 @@ end
 -- Starstorm stuff
 if modloader.checkMod("StarStorm") then
 	require("rules")
+	require("tabmenu")
 end
