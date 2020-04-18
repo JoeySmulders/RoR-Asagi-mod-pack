@@ -10,7 +10,7 @@ turbo.id = 2
 turbo.type = "choice"
 turbo.default = 1.2
 turbo.tooltip = "Change the speed of the game by this multiplier"
-turbo.options = {0.5, 1, 1.2, 1.5, 2, 3}
+turbo.options = {0.5, 1, 1.2, 1.25, 1.3, 1.4, 1.5, 1.75, 2, 3, 10}
 
 local spitefulBounce = Rule.new("Spiteful on bounce")
 spitefulBounce.id = 3

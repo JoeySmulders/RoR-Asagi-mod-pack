@@ -23,6 +23,7 @@ if not modloader.checkFlag("TE_no_items") then
 	require("Items/wings")
 	require("Items/broken_lan_cable")
 	require("Items/see-through_log")
+	require("Items/mirror_shard")
 
 	-- Uncommon
 	require("Items/soul_devourer")
@@ -31,7 +32,6 @@ if not modloader.checkFlag("TE_no_items") then
 
 	-- Rare
 	require("Items/punching_bag")
-	require("Items/ultra_clover")
 
 	-- Use
 	require("Items/big_scythe")
@@ -45,9 +45,10 @@ end
 -- Load Artifact scripts
 if not modloader.checkFlag("TE_no_artifacts") then
 	require("Artifacts/spiter")
-	require("Artifacts/worms")
 	require("Artifacts/turbo")
+	require("Artifacts/worms")
 	require("Artifacts/pain")
+	require("Artifacts/luck")
 end
 
 -- Starstorm stuff

@@ -71,7 +71,7 @@ end)
 
 item:setLog{
     group = "common",
-    description = "",
+    description = "Shoot out 8 ninja stars around you every 10 seconds for 50% damage",
     story = "",
     destination = "",
     date = ""

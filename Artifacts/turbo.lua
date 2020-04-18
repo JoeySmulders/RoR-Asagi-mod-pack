@@ -8,9 +8,12 @@ artifact.unlocked = true
 
 -- Set the artifact's loadout info
 artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/turbo.png", 2, 18, 18)
-artifact.loadoutText = "Game is 20% faster"
+artifact.loadoutText = "Game is 20% faster."
 
 local speedMultiplier = 1.2
+
+-- TODO: make teleporter timer go faster
+-- TODO: make cooldowns go faster
 
 -- Starstorm rules
 registercallback("postSelection", function()
@@ -32,6 +35,7 @@ registercallback("onStep", function()
         for i, player in ipairs(misc.players) do
             if not player:getData().speedSet and player:get("pHmax") ~= 0 then
                 player:set("pHmax", player:get("pHmax") * speedMultiplier)
+                --player:set("pVmax", player:get("pVmax") * speedMultiplier)
                 player:getData().speedSet = true
             end
         end
@@ -53,10 +57,6 @@ function turbo (actor)
     actor:set("attack_speed", actor:get("attack_speed") * speedMultiplier) 
     --actor.spriteSpeed = actor.spriteSpeed * speedMultiplier 
     actor:set("pHmax", actor:get("pHmax") * speedMultiplier) -- For some reasons this is set to fucking 0 during postSelection for players...
-
-    if actor:get("pVMax") then
-        actor:set("pVmax", actor:get("pVmax") * speedMultiplier)
-    end
 
     actor:set("speed", actor:get("speed") * speedMultiplier)
     actor:set("hp_regen", actor:get("hp_regen") * speedMultiplier)

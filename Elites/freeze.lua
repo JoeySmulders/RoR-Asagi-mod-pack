@@ -14,6 +14,8 @@ magmaWorm.eliteTypes:add(elite.Freezing)
 local freezeTimer = 2 * 60
 local freezeImmune = 5 * 60
 
+-- TODO: turn the freeze into a debuff instead of hardcoded
+
 -- Adding a new elite type for magma worm seems to enable the rest of the original elites for them too, disable them
 for i, eliteType in ipairs(originalElites) do
     if eliteType ~= elite.Overloading then

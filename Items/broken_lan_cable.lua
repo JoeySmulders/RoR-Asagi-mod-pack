@@ -5,7 +5,7 @@ local item = Item("Broken LAN cable")
 
 item.pickupText = "Delay damage taken by 2 seconds"
 
-item.sprite = Sprite.load("Items/sprites/LAN_cable", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/LAN_cable", 1, 12, 12)
 
 item:setTier("common")
 
@@ -71,7 +71,7 @@ end)
 
 item:setLog{
     group = "common",
-    description = "",
+    description = "Delay damage taken by 2 seconds",
     story = "",
     destination = "",
     date = ""

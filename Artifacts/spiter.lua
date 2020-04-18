@@ -8,8 +8,8 @@ local artifact = Artifact.new("Spiteful")
 artifact.unlocked = true
 
 -- Set the artifact's loadout info
-artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/example.png", 2, 18, 18)
-artifact.loadoutText = "Blood is Spite. Spite is more"
+artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/spite2.png", 2, 18, 18)
+artifact.loadoutText = "Enemies explode on hit."
 
 local spite = Artifact.find("Spite", "Vanilla")
 local spiteBombs = Object.find("EfGrenadeEnemy", "Vanilla")

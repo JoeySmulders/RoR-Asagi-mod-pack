@@ -9,7 +9,7 @@ artifact.unlocked = true
 
 -- Set the artifact's loadout info
 artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/pain.png", 2, 18, 18)
-artifact.loadoutText = "Health is 1"
+artifact.loadoutText = "Health is 1."
 
 local glass = Artifact.find("Glass", "Vanilla")
 

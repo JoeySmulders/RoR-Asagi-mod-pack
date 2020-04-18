@@ -4,7 +4,7 @@
 local item = Item("Big Scythe")
 
 item.pickupText = "Deal massive damage to a random enemy"
-item.sprite = Sprite.load("Items/sprites/Big_scythe", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/Big_scythe", 1, 13, 13)
 item:setTier("use")
 item.isUseItem = true
 item.useCooldown = 30
@@ -43,7 +43,7 @@ end)
 
 item:setLog{
     group = "use",
-    description = "",
+    description = "Deal 100000% damage to a random enemy",
     story = "",
     destination = "",
     date = ""

@@ -5,7 +5,7 @@ local item = Item("Thieves Hat")
 
 item.pickupText = "Boost forward when jumping in midair"
 
-item.sprite = Sprite.load("Items/sprites/Thieves_hat", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/Thieves_hat", 1, 14, 10)
 
 item:setTier("uncommon")
 
@@ -71,7 +71,7 @@ end)
 
 item:setLog{
     group = "uncommon",
-    description = "",
+    description = "Boost forward with extra horizontal speed when jumping in midair",
     story = "",
     destination = "",
     date = ""

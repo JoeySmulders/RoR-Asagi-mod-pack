@@ -36,7 +36,7 @@ end)
 
 item:setLog{
     group = "uncommon",
-    description = "",
+    description = "Hitting an enemy increases damage by 1, but the damage is lost when you take damage",
     story = "",
     destination = "",
     date = ""

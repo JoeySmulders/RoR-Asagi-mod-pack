@@ -25,7 +25,7 @@ end)
 
 item:setLog{
     group = "rare",
-    description = "",
+    description = "Reduce damage taken by 80% when standing perfectly still",
     story = "",
     destination = "",
     date = ""

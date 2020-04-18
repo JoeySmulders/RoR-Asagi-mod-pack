@@ -24,10 +24,10 @@ registercallback("onPlayerDeath", function(player)
             n = n + 1
         end
 
-        -- Stacking the item increases the chance of gold and medium chests by 1%
-        if math.chance(count) then
+        -- Stacking the item increases the chance of gold and medium chests by 10%
+        if math.chance((10 * count) - 9) then
             chest = obj.Chest5
-        elseif math.chance(18 + count) then
+        elseif math.chance(9 + (10 * count)) then
             chest = obj.Chest2
         else
             chest = obj.Chest1
@@ -43,7 +43,7 @@ end)
 
 item:setLog{
     group = "uncommon",
-    description = "",
+    description = "Spawn an item chest when you die",
     story = "",
     destination = "",
     date = ""

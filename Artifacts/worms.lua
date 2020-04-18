@@ -3,13 +3,13 @@
 ---- Adds a new artifact which makes worms the only enemy that spawns, and all non overloading worms gain a random color
 
 -- Creates a new artifact with the name Artifact of Worms
-local artifact = Artifact.new("Worms")
+local artifact = Artifact.new("Worm")
 -- Make the artifact be unlocked by default
 artifact.unlocked = true
 
 -- Set the artifact's loadout info
-artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/example2.png", 2, 18, 18)
-artifact.loadoutText = "All enemies are now colorful worms"
+artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/worm.png", 2, 18, 18)
+artifact.loadoutText = "Worm Party."
 
 local worm = Object.find("Worm", "Vanilla")
 
