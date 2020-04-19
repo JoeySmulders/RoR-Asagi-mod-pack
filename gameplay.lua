@@ -42,7 +42,7 @@ registercallback("onStep", function()
                         if player:control("enter") == input.PRESSED and player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
                             local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
                             misc.director:set("spawn_boss", 1)
-                            misc.director:set("points", misc.director:get("points") + 2000 + misc.director:get("stages_passed") * 1000)
+                            misc.director:set("points", misc.director:get("points") + 2000 + misc.director:get("stages_passed") * 2500)
                             activated = true
                         end
                     end
