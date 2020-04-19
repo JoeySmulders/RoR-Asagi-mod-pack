@@ -1,8 +1,6 @@
 local sprFreezePal = Sprite.load("FreezeElitePalette", "Elites/Palettes/Freeze_Elite", 1, 0, 0)
 local sprFrozen = Sprite.load("FreezeFrozen", "Elites/Sprites/Frozen", 1, 7, 8)
 
-log(sprFrozen)
-
 elite.Freezing = EliteType.new("Freezing")
 elite.Freezing.displayName = "Freezing"
 elite.Freezing.color = Color.fromHex(0x0000FF)
