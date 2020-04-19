@@ -1,11 +1,11 @@
 -- Soul_devourer.lua
 -- Uncommon tier item that gives the player 1 extra damage every time they hit an enemy
 
-local item = Item("Soul Devourer")
+local item = Item("Soul Taker")
 
 item.pickupText = "Hitting an enemy increases damage by 1, damage is lost when you take damage"
 
-item.sprite = Sprite.load("Items/sprites/Soul_devourer", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/Soul_devourer", 1, 12, 11)
 
 item:setTier("uncommon")
 

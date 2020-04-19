@@ -1,11 +1,11 @@
 -- see-through_log.lua
 -- Common tier item that shoots out 9 stars around the player every 10 seconds
 
-local item = Item("See-through log")
+local item = Item("Suspicious log")
 
 item.pickupText = "Shoot out ninja stars every 10 seconds"
 
-item.sprite = Sprite.load("Items/sprites/See-through_log", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/See-through_log", 1, 12, 13)
 
 item:setTier("common")
 

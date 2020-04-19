@@ -55,10 +55,10 @@ registercallback("onStep", function()
         if artifact.active and spite.active then
             for i, instance in ipairs(spiteBombs:findAll()) do
                 if instance:getData().noReplicate ~= true then
-                    if instance:collidesMap(instance.x, instance.y + 3) then
+                    if instance:collidesMap(instance.x, instance.y + 4) then
                         instance:getData().bounced = true
                     end
-                    if instance:getData().bounced == true and not instance:collidesMap(instance.x, instance.y + 3) then
+                    if instance:getData().bounced == true and not instance:collidesMap(instance.x, instance.y + 4) then
                         for i = 1, bounceAmount, 1 do
                             local extraSpite = spiteBombs:create(instance.x, instance.y)
                             extraSpite:getData().noReplicate = true

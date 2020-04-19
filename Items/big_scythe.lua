@@ -11,6 +11,9 @@ item.useCooldown = 30
 
 ItemPool.find("enigma", "vanilla"):add(item)
 
+-- TODO: make it prioritize enemies on screen first
+-- TODO: make it an explosion that damages multiple enemies?
+
 item:addCallback("use", function(player, embryo)
 	local count = 1
 	-- Hit two enemies if embryo is procced

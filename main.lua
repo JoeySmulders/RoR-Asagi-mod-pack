@@ -32,6 +32,7 @@ if not modloader.checkFlag("TE_no_items") then
 
 	-- Rare
 	require("Items/punching_bag")
+	require("Items/uranium_bullets")
 
 	-- Use
 	require("Items/big_scythe")
@@ -49,6 +50,10 @@ if not modloader.checkFlag("TE_no_artifacts") then
 	require("Artifacts/worms")
 	require("Artifacts/pain")
 	require("Artifacts/luck")
+end
+
+if not modloader.checkFlag("TE_no_gameplay") then
+	require("gameplay")
 end
 
 -- Starstorm stuff

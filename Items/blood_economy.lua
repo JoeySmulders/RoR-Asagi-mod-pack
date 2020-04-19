@@ -5,7 +5,7 @@ local item = Item("Blood Economy")
 
 item.pickupText = "Spawn an Item when you die"
 
-item.sprite = Sprite.load("Items/sprites/Blood_economy", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/Blood_economy", 1, 12, 13)
 
 item:setTier("uncommon")
 

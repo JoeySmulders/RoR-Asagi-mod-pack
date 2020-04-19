@@ -44,14 +44,16 @@ registercallback("onPlayerStep", function(player)
         if tableCount > 0 then
             for timer, value in pairs(damageTable) do
                 if timer <= 0 then
-                    if player:get("shield") > 0 then
-                        player:set("shield", player:get("shield") - value)
-                        player:set("shield_cooldown", 7 * 60)
-                        misc.damage(value, player.x, player.y, false, Color.ORANGE)
-                    else
-                        player:set("hp", player:get("hp") - value)
-                        player:set("shield_cooldown", 7 * 60)
-                        misc.damage(value, player.x, player.y - 10, false, Color.ORANGE)
+                    if player:get("invincible") == 0 then
+                        if player:get("shield") > 0 then
+                            player:set("shield", player:get("shield") - value)
+                            player:set("shield_cooldown", 7 * 60)
+                            misc.damage(value, player.x, player.y, false, Color.ORANGE)
+                        else
+                            player:set("hp", player:get("hp") - value)
+                            player:set("shield_cooldown", 7 * 60)
+                            misc.damage(value, player.x, player.y - 10, false, Color.ORANGE)
+                        end
                     end
                 else
                     timer = timer - 1
@@ -64,8 +66,12 @@ registercallback("onPlayerStep", function(player)
     end
 end)
 
--- clean up the damage table on death so they don't store it into the next game or level
+-- clean up the damage table on death or game end so they don't store it into the next game or level
 registercallback("onPlayerDeath", function(player)
+    damageTable = {}
+end)
+
+registercallback("onGameEnd", function()
     damageTable = {}
 end)
 

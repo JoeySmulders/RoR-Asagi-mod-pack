@@ -18,7 +18,11 @@ spitefulBounce.type = "checkbox"
 spitefulBounce.default = true
 spitefulBounce.tooltip = "Enable extra spiteball being generated when both spite and spiteful are enabled"
 
-local test2 = Rule.new("Placeholder 2")
+local teleportChallenge = Rule.new("Teleport Challenge")
+teleportChallenge.id = 4
+teleportChallenge.type = "checkbox"
+teleportChallenge.default = true
+teleportChallenge.tooltip = "Allow using the teleporter again while the boss is active to spawn another boss and gain a clover"
 
 local spitefulOnbounce = Rule.new("Amount generated on bounce")
 spitefulOnbounce.id = 5

@@ -5,7 +5,7 @@ local item = Item("Punching Bag")
 
 item.pickupText = "Reduce damage taken by 80% when standing perfectly still"
 
-item.sprite = Sprite.load("Items/sprites/Punching_bag", 1, 18, 15)
+item.sprite = Sprite.load("Items/sprites/Punching_bag", 1, 12, 13)
 
 item:setTier("rare")
 
