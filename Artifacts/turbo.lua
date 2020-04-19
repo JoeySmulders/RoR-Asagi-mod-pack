@@ -8,7 +8,7 @@ artifact.unlocked = true
 
 -- Set the artifact's loadout info
 artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/turbo.png", 2, 18, 18)
-artifact.loadoutText = "Game is 20% faster."
+artifact.loadoutText = "Everything is 20% faster."
 
 local speedMultiplier = 1.2
 

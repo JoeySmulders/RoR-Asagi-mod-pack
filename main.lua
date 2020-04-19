@@ -14,7 +14,7 @@ originalElites = {
 
 -- Load Survivor scripts
 if not modloader.checkFlag("TE_no_survivors") then
-	require("night")
+	--require("night")
 end
 
 -- Load Item scripts
@@ -49,7 +49,6 @@ if not modloader.checkFlag("TE_no_artifacts") then
 	require("Artifacts/turbo")
 	require("Artifacts/worms")
 	require("Artifacts/pain")
-	require("Artifacts/luck")
 end
 
 if not modloader.checkFlag("TE_no_gameplay") then

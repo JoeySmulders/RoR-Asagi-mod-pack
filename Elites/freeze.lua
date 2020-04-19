@@ -1,4 +1,7 @@
 local sprFreezePal = Sprite.load("FreezeElitePalette", "Elites/Palettes/Freeze_Elite", 1, 0, 0)
+local sprFrozen = Sprite.load("FreezeFrozen", "Elites/Sprites/Frozen", 1, 7, 8)
+
+log(sprFrozen)
 
 elite.Freezing = EliteType.new("Freezing")
 elite.Freezing.displayName = "Freezing"
@@ -15,6 +18,7 @@ local freezeTimer = 2 * 60
 local freezeImmune = 5 * 60
 
 -- TODO: turn the freeze into a debuff instead of hardcoded
+-- TODO: have an actual sprite or palette for the Freezing magma worm instead of just adding a color
 
 -- Adding a new elite type for magma worm seems to enable the rest of the original elites for them too, disable them
 for i, eliteType in ipairs(originalElites) do
@@ -74,6 +78,18 @@ registercallback("onPlayerStep", function(player)
     if player:getData().frozen == 0 then
         if player:getData().frozenTimer >= freezeTimer then
             player:getData().frozenTimer = player:getData().frozenTimer - 1
+        end
+    end
+end)
+
+registercallback("onDraw", function()
+    for i, player in ipairs(misc.players) do
+        -- Draw the frozen sprite on top of the player when they get frozen by a Freezing elite
+        if player:getData().frozen == 1 then
+            graphics.drawImage{sprFrozen, player.x, player.y,
+            width = player.sprite.width + 5,
+            height = player.sprite.height + 5
+        }
         end
     end
 end)
