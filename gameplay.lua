@@ -7,6 +7,8 @@ local teleportEnabled = true
 local inTeleporter = false
 local foundTeleporter
 local playerObject = ParentObject.find("P", "Vanilla")
+local currentPlayer
+
 
 -- Starstorm rules
 registercallback("postSelection", function()
@@ -31,6 +33,7 @@ registercallback("onStep", function()
                         inTeleporter = true
                         foundTeleporter = teleporter
                         loop = false
+                        currentPlayer = player
                     else
                         inTeleporter = false
                     end
@@ -42,7 +45,7 @@ registercallback("onStep", function()
                         if player:control("enter") == input.PRESSED and player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
                             local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
                             misc.director:set("spawn_boss", 1)
-                            misc.director:set("points", misc.director:get("points") + 2000 + misc.director:get("stages_passed") * 2500)
+                            misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
                             activated = true
                         end
                     end
@@ -60,7 +63,7 @@ end)
 
 registercallback("onDraw", function()
     if inTeleporter == true then
-        graphics.printColor("&w&Press A to challenge the odds.&!&", foundTeleporter.x - 80, foundTeleporter.y - 80, graphics.FONT_DEFAULT)
+        graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to challenge the odds.&!&", foundTeleporter.x - 80, foundTeleporter.y - 80, graphics.FONT_DEFAULT)
     end
 end)
 

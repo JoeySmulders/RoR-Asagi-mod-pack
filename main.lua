@@ -33,6 +33,7 @@ if not modloader.checkFlag("TE_no_items") then
 	-- Rare
 	require("Items/punching_bag")
 	require("Items/uranium_bullets")
+	require("Items/super_stickies")
 
 	-- Use
 	require("Items/big_scythe")
@@ -59,6 +60,7 @@ end
 if modloader.checkMod("StarStorm") then
 	require("rules")
 	require("tabmenu")
+	require("Skins/skins")
 end
 
 

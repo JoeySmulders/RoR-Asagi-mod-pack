@@ -45,7 +45,7 @@ registercallback("onPlayerStep", function(player)
             end
 
             -- If jumping to the right
-            if player:get("bamboo_boost") == 1 then
+            if player:get("bamboo_boost") == 1 and (player:get("activity_type") == 3 or player:get("activity_type") == 0) then
                 player:set("activity_type", 3)
                 player:set("pHspeed", player:get("pHmax") * 1.5 + (0.5 * count))
                 if player:control("right") == input.NEUTRAL then
@@ -54,7 +54,7 @@ registercallback("onPlayerStep", function(player)
                 end
             end
             -- If jumping to the left
-            if player:get("bamboo_boost") == 2 then
+            if player:get("bamboo_boost") == 2 and (player:get("activity_type") == 3 or player:get("activity_type") == 0) then
                 player:set("activity_type", 3)
                 player:set("pHspeed", player:get("pHmax") * -1.5 - (0.5 * count))
                 if player:control("left") == input.NEUTRAL then
@@ -65,7 +65,9 @@ registercallback("onPlayerStep", function(player)
 
             -- Disable boost when you hit the floor
             if player:get("free") == 0 and player:get("bamboo_boost") ~= 0 then
-                player:set("activity_type", 0)
+                if (player:get("activity_type") == 3) then 
+                    player:set("activity_type", 0)
+                end
                 player:set("bamboo_boost", 0)
             end
         end

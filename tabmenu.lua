@@ -14,3 +14,4 @@ TabMenu.setItemInfo(Item.find("Thieves Hat"), nil, "Boost forward when jumping i
 -- rare
 TabMenu.setItemInfo(Item.find("Punching Bag"), 1, "Reduce damage taken by 80% when standing perfectly still", nil)
 TabMenu.setItemInfo(Item.find("Uranium Bullets"), 6, "Deal 1% of enemy max hp per 100% damage dealt as extra damage", "-10% damage needed per 1% extra damage")
+TabMenu.setItemInfo(Item.find("Super Stickies"), nil, "5% chance on hit to attach 3 stickies that deal 500% damage", "+2 stickies")
