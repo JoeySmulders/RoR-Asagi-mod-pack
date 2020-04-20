@@ -63,3 +63,48 @@ registercallback("onDraw", function()
         graphics.printColor("&w&Press A to challenge the odds.&!&", foundTeleporter.x - 80, foundTeleporter.y - 80, graphics.FONT_DEFAULT)
     end
 end)
+
+
+-- Respawn a command chest if the user using it dies
+
+local crateRespawn = true
+local activeCrates = {}
+local crates = ParentObject.find("commandCrates", "Vanilla")
+
+-- Starstorm rules
+registercallback("postSelection", function()
+    crateRespawn = Rule.getSetting(Rule.find("Crate Respawn"))
+end)
+
+registercallback("onStageEntry", function()
+    for i, player in ipairs(misc.players) do
+        player:getData().crateActive = false
+    end
+    activeCrates = {}
+end)
+
+registercallback("postStep", function()
+    if crateRespawn then
+
+        for i, crate in ipairs(crates:findMatchingOp("active", "==", 1)) do
+            local player = Object.findInstance(crate:get("owner"))
+            if player and player:getData().crateActive == false then
+                table.insert(activeCrates, {["player"] = player, ["crate"] = crate:getObject()})
+                player:getData().crateActive = true
+            end
+        end
+
+        for key, data in pairs(activeCrates) do
+            if data.player:get("dead") == 1 then 
+                data.crate:create(data.player.x, data.player.y)
+                activeCrates[key] = nil
+            else
+
+                if data.player:get("activity") ~= 95 then
+                    activeCrates[key] = nil  
+                end
+            end
+
+        end
+    end
+end)

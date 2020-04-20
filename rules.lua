@@ -32,7 +32,11 @@ spitefulOnbounce.tooltip = "How many extra spiteballs are generated on each boun
 spitefulOnbounce.options = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100}
 spitefulOnbounce.isSub = 3
 
-local test3 = Rule.new("Placeholder 3")
+local crate = Rule.new("Crate Respawn")
+crate.id = 6
+crate.type = "checkbox"
+crate.default = true
+crate.tooltip = "Respawn a command chest if the user using it dies"
 
 local spitefulPlayerDeath = Rule.new("Player death creates spite")
 spitefulPlayerDeath.id = 7
