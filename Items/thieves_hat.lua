@@ -18,10 +18,13 @@ item:addCallback("pickup", function(player)
     end
 end)
 
+-- Fix weird bug involving miner his X
+
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
     
     if count > 0 then
+
         -- TODO: Figure out how to actually make ropes stop acting weird when you have this item
         -- TODO 2: Put some momentum into it instead of just stopping instantly when you stop holding the direction
         -- TODO 3: Put an animation effect when doing a boost jump
@@ -61,7 +64,7 @@ registercallback("onPlayerStep", function(player)
             end
 
             -- Disable boost when you hit the floor
-            if player:get("free") == 0 then
+            if player:get("free") == 0 and player:get("bamboo_boost") ~= 0 then
                 player:set("activity_type", 0)
                 player:set("bamboo_boost", 0)
             end
