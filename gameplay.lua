@@ -68,15 +68,17 @@ registercallback("onDraw", function()
 end)
 
 
--- Respawn a command chest if the user using it dies
+-- Respawn a command chest if the user using it dies, and be able to back out of opening one
 
 local crateRespawn = true
+local crateBackout = true
 local activeCrates = {}
 local crates = ParentObject.find("commandCrates", "Vanilla")
 
 -- Starstorm rules
 registercallback("postSelection", function()
     crateRespawn = Rule.getSetting(Rule.find("Crate Respawn"))
+    crateBackout = Rule.getSetting(Rule.find("Crate Backout"))
 end)
 
 registercallback("onStageEntry", function()
@@ -86,28 +88,79 @@ registercallback("onStageEntry", function()
     activeCrates = {}
 end)
 
-registercallback("postStep", function()
-    if crateRespawn then
+registercallback("onStep", function()
+    if crateRespawn or crateBackout then
 
+        -- Check all crates to see if they are active and insert the crate and player into a table
         for i, crate in ipairs(crates:findMatchingOp("active", "==", 1)) do
             local player = Object.findInstance(crate:get("owner"))
             if player and player:getData().crateActive == false then
                 table.insert(activeCrates, {["player"] = player, ["crate"] = crate:getObject()})
-                player:getData().crateActive = true
             end
         end
 
+        -- Only set crateActive to true after looping through all crates
         for key, data in pairs(activeCrates) do
-            if data.player:get("dead") == 1 then 
-                data.crate:create(data.player.x, data.player.y)
-                activeCrates[key] = nil
-            else
+            if data.player then
+                data.player:getData().crateActive = true
+            end
+        end
 
-                if data.player:get("activity") ~= 95 then
+        -- If the player dies, create a new command crate of the same type
+        if crateRespawn then
+            for key, data in pairs(activeCrates) do
+                if data.player:get("dead") == 1 then 
+                    local xOffset = math.random(-5,5)
+                    data.crate:create(data.player.x + xOffset, data.player.y)
                     activeCrates[key] = nil  
+                else
+                    if data.player:get("activity") ~= 95 then
+                        activeCrates[key] = nil  
+                    end
                 end
+
+            end
+        end
+
+        -- If the player jumps, delete the current crates and remake them
+        if crateBackout then
+            for key, data in pairs(activeCrates) do
+                
+                if data.player:control("jump") == input.PRESSED then
+
+                    for i, crate in ipairs(crates:findMatchingOp("active", ">=", 1)) do
+                        if Object.findInstance(crate:get("owner")) == data.player then
+                            local oldPositionX = crate.x 
+                            local oldPositionY = crate.y
+                            crate:set("active", 0)
+                            crate:delete()
+                            data.crate:create(oldPositionX, oldPositionY)
+                            data.player:set("activity", 0)
+                            data.player:set("activity_type", 0)
+                        end
+                    end
+                    data.player:getData().crateActive = false
+                    activeCrates[key] = nil  
+                else
+                    if data.player:get("activity") ~= 95 then
+                        data.player:getData().crateActive = false
+                        activeCrates[key] = nil  
+                    end
+                end
+
             end
 
         end
+
+        -- Can probaly get rid of a few of the earlier crateActive = false calls
+        for i, player in ipairs(misc.players) do
+            if player:get("activity") ~= 95 and player:getData().crateActive == true then
+                player:getData().crateActive = false
+            end
+        end
+
     end
 end)
+
+
+

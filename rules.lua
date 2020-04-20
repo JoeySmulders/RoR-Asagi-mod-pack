@@ -36,7 +36,7 @@ local crate = Rule.new("Crate Respawn")
 crate.id = 6
 crate.type = "checkbox"
 crate.default = true
-crate.tooltip = "Respawn a command chest if the user using it dies"
+crate.tooltip = "Respawn a command crate if the user using it dies"
 
 local spitefulPlayerDeath = Rule.new("Player death creates spite")
 spitefulPlayerDeath.id = 7
@@ -45,3 +45,8 @@ spitefulPlayerDeath.default = 50
 spitefulPlayerDeath.tooltip = "How many friendly spite balls are created on player death"
 spitefulPlayerDeath.options = {0, 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000}
 
+local crateBackout = Rule.new("Crate Backout")
+crateBackout.id = 8
+crateBackout.type = "checkbox"
+crateBackout.default = true
+crateBackout.tooltip = "Jumping while using a command crate will back out of using it"
