@@ -8,7 +8,7 @@ TabMenu.setItemInfo(Item.find("Broken LAN cable"), nil, "Delay damage taken by 2
 
 -- uncommon
 TabMenu.setItemInfo(Item.find("Soul Taker"), nil, "Hitting an enemy increases damage by 1, damage is lost when you take damage", "+1 damage")
-TabMenu.setItemInfo(Item.find("Blood Economy"), 11, "Spawn an item chest when you die", "10% better chest chance")
+TabMenu.setItemInfo(Item.find("Blood Economy"), nil, "Gain 10% of damage dealt or taken as gold", "10% more gold")
 TabMenu.setItemInfo(Item.find("Thieves Hat"), nil, "Boost forward when jumping in midair", "50% of speed added to boost")
 
 -- rare
