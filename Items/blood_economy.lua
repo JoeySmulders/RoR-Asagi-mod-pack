@@ -59,7 +59,6 @@ function createGold (player, bullet)
 
     if count > 0 then
         bullet:set("gold_on_hit", math.sqrt(bullet:get("damage") * count * 0.1)) -- gold_on_hit produces the number squared amount of coins
-        log((bullet:get("damage") * (count * 0.1)))
     end
 
 end

@@ -27,6 +27,7 @@ registercallback("onHit", function(bullet, hit)
     end
 end)
 
+-- TODO: make them fire over a longer period of time instead of every frame
 -- Fire only one sticky per frame
 registercallback("onPlayerStep", function(player)
     if player:getData().repeatStickies then

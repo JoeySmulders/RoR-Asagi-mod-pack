@@ -9,6 +9,7 @@ item.sprite = Sprite.load("Items/sprites/Soul_devourer", 1, 12, 11)
 local sprMeter = Sprite.load("Items/sprites/soul_meter", 14, 7, 2)
 item:setTier("uncommon")
 
+
 -- Initialize damage counter for the item
 item:addCallback("pickup", function(player)
     local count = player:countItem(item)
@@ -16,7 +17,22 @@ item:addCallback("pickup", function(player)
     if count == 1 then
         player:set("soul-devourer_counter", 0)
     end
+
 end)
+
+-- Double the soul counter if you pick up force relic so it doesn't give you permanent free damage
+if modloader.checkMod("StarStorm") then
+    local force = Item.find("Relic of Force")
+
+    force:addCallback("pickup", function(player)
+        local count = player:countItem(item)
+        
+        if count > 0 then
+            player:set("soul-devourer_counter", player:get("soul-devourer_counter") * 2)
+        end
+    end)
+end
+
 
 registercallback("onHit", function(bullet, hit)
     local parent = bullet:getParent()
@@ -45,10 +61,9 @@ registercallback("onPlayerDraw", function(player)
         graphics.drawImage{
             image = sprMeter, 
             x = player.x, 
-            y = player.y - 27, 
+            y = player.y - 25, 
             subimage = math.clamp(math.round(meterValue), 1, 14)
         }
-        --graphics.printColor("&bl&" .. player:get("soul-devourer_counter") .. "&!&", player.x + 12, player.y - 27, graphics.FONT_DEFAULT)
     end
 end)
 
