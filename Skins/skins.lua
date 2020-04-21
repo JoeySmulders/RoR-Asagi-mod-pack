@@ -10,4 +10,4 @@ local sprites = {
     decoy = Sprite.find("Beastmaster_Decoy"),
 }
 
-SurvivorSkin.new(chirr, "Maid Chirr", Sprite.find("Beastmaster_Select"), sprites, Color.BLACK)
+--SurvivorSkin.new(chirr, "Maid Chirr", Sprite.find("Beastmaster_Select"), sprites, Color.BLACK)
