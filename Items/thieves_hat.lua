@@ -3,9 +3,10 @@
 
 local item = Item("Thieves Hat")
 
-item.pickupText = "Boost forward when jumping in midair"
+item.pickupText = "Boost forward when jumping in midair while holding a direction"
 
 item.sprite = Sprite.load("Items/sprites/Thieves_hat", 1, 14, 10)
+local jumpSprite = Sprite.load("Items/sprites/thieves_jump", 3, 6, 8)
 
 item:setTier("uncommon")
 
@@ -18,7 +19,9 @@ item:addCallback("pickup", function(player)
     end
 end)
 
--- Fix weird bug involving miner his X
+local jump = ParticleType.new("Thief Jump")
+jump:sprite(jumpSprite, true, true, false)
+jump:life(0.3 * 60, 0.3 * 60)
 
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
@@ -26,8 +29,6 @@ registercallback("onPlayerStep", function(player)
     if count > 0 then
 
         -- TODO: Figure out how to actually make ropes stop acting weird when you have this item
-        -- TODO 2: Put some momentum into it instead of just stopping instantly when you stop holding the direction
-        -- TODO 3: Put an animation effect when doing a boost jump
         if player:get("activity") == 30 then
             player:set("bamboo_boost", 0)
         else
@@ -36,8 +37,10 @@ registercallback("onPlayerStep", function(player)
             and (player:control("left") == input.HELD or player:control("right") == input.HELD) then
                 if player:getFacingDirection() == 0 then
                     player:set("bamboo_boost", 1)
+                    jump:burst("middle", player.x - 5, player.y, 1)
                 else
                     player:set("bamboo_boost", 2)
+                    jump:burst("middle", player.x + 5, player.y, 1)
                 end 
                 player:set("moveUp", 1) 
                 player:set("pVspeed", player:get("pVmax") * -1)
