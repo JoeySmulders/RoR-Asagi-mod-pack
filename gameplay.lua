@@ -4,7 +4,6 @@ local clover = Object.find("Clover", "Vanilla")
 local teleporters = Object.find("Teleporter", "Vanilla")
 local activated = false
 local teleportEnabled = true
-local inTeleporter = false
 local foundTeleporter
 local playerObject = ParentObject.find("P", "Vanilla")
 local currentPlayer
@@ -42,20 +41,23 @@ registercallback("onStep", function()
         for i, teleporter in pairs(teleporters:findAll()) do
             if teleporter:get("active") == 1 and teleporter:getData().activated == false then
 
-                local loop = true
+                local found = false
                 for i, player in ipairs(misc.players) do
-                    if player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
-                        inTeleporter = true
-                        foundTeleporter = teleporter
-                        loop = false
-                        currentPlayer = player
-                    else
-                        inTeleporter = false
+                    player:getData().teleporterLoop = true
+                    if found == false then
+                        if player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
+                            teleporter:getData().inTeleporter = true
+                            player:getData().teleporterLoop = false
+                            currentPlayer = player
+                            found = true
+                        else
+                            teleporter:getData().inTeleporter = false
+                        end
                     end
                 end
 
-                if loop == false then
-                    for i, player in ipairs(misc.players) do                       
+                for i, player in ipairs(misc.players) do
+                    if player:getData().teleporterLoop == false then                       
                         if player:control("enter") == input.PRESSED and player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
                             if not net.online or net.localPlayer == player then
                                 if net.host then
@@ -70,20 +72,16 @@ registercallback("onStep", function()
                         end
                     end
                 end
-                
-            else
-                inTeleporter = false
             end
         end
-
-    else
-        inTeleporter = false
     end
 end)
 
 registercallback("onDraw", function()
-    if inTeleporter == true then
-        graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to challenge the odds.&!&", foundTeleporter.x - 80, foundTeleporter.y - 80, graphics.FONT_DEFAULT)
+    for i, teleporter in pairs(teleporters:findAll()) do
+        if teleporter:getData().inTeleporter == true and teleporter:getData().activated == false then
+            graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to challenge the odds.&!&", teleporter.x - 80, teleporter.y - 80, graphics.FONT_DEFAULT)
+        end
     end
 end)
 
