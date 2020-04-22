@@ -21,7 +21,7 @@ registercallback("onStageEntry", function()
     end
 end)
 
-local teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, teleporterState)
+teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, teleporterState)
     local teleporter = teleporters:findMatchingOp("active", "==", teleporterState)
 
     if #teleporter > 0 then
@@ -30,13 +30,12 @@ local teleporterPacket = net.Packet("Activate Teleporter Challenge", function(pl
             local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
             misc.director:set("spawn_boss", 1)
             misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
+            teleporter:getData().activated = true
             teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
-
+        else
+            teleporter[1]:getData().activated = true
         end
-        teleporter[1]:getData().activated = true
-    end
-
-    
+    end 
 end)
 
 
@@ -71,7 +70,7 @@ registercallback("onStep", function()
                                     misc.director:set("spawn_boss", 1)
                                     misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
                                     teleporter:getData().activated = true
-                                    teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
+                                    --teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
                                 else
                                     teleporterPacket:sendAsClient(teleporter:get("active"))
                                 end
