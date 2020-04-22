@@ -9,12 +9,12 @@ item.sprite = Sprite.load("Items/sprites/super_sticky", 1, 14, 14)
 
 item:setTier("rare")
 
-superStickies = net.Packet("Super Sticky Packet", function(player)
-    local sticky = player:fireExplosion(player:getData().stickyPositionX, player:getData().stickyPositionY, 5 / 19, 5 / 4, 1, nil)
+superStickies = net.Packet("Super Sticky Packet", function(player, xPosition, yPosition)
+    local sticky = player:fireExplosion(xPosition, yPosition, 5 / 19, 5 / 4, 1, nil)
     sticky:getData().noSticky = true
     sticky:set("sticky", 10) -- 10 sticky value is equal to 500% damage
     if net.host then
-        teleporterPacket:sendAsHost(net.EXCLUDE, player)
+        teleporterPacket:sendAsHost(net.EXCLUDE, player, xPosition, yPosition)
     end
 end)
 
@@ -47,9 +47,9 @@ registercallback("onPlayerStep", function(player)
             player:getData().repeatStickies = player:getData().repeatStickies - 1
 
             if net.host then
-                superStickies:sendAsHost(net.ALL, nil)
+                superStickies:sendAsHost(net.ALL, nil, player:getData().stickyPositionX, player:getData().stickyPositionY)
             else
-                superStickies:sendAsClient()
+                superStickies:sendAsClient(player:getData().stickyPositionX, player:getData().stickyPositionY)
             end
 
         end
