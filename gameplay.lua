@@ -17,15 +17,30 @@ end)
 
 -- Reset being able to do the clover challenge on stage entry
 registercallback("onStageEntry", function()
-    activated = false
+    for i, teleporter in pairs(teleporters:findAll()) do
+        teleporter:getData().activated = false
+    end
 end)
+
+local teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, teleporterId)
+    local teleporter = Teleporters:findMatching("id", teleporterId)
+    if teleporter > 0 then
+        if net.host then
+            local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+            misc.director:set("spawn_boss", 1)
+            misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
+            teleporter:getData().activated = true
+        end
+    end
+end)
+
 
 -- Check if the teleporter is in active state 1 and if a player is next to it, then check if they press A
 registercallback("onStep", function()
-    if activated == false and teleportEnabled == true then
+    if teleportEnabled == true then
         
         for i, teleporter in pairs(teleporters:findAll()) do
-            if teleporter:get("active") == 1 then
+            if teleporter:get("active") == 1 and teleporter:getData().activated == false then
 
                 local loop = true
                 for i, player in ipairs(misc.players) do
@@ -40,12 +55,18 @@ registercallback("onStep", function()
                 end
 
                 if loop == false then
-                    for i, player in ipairs(misc.players) do
+                    for i, player in ipairs(misc.players) do                       
                         if player:control("enter") == input.PRESSED and player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
-                            local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
-                            misc.director:set("spawn_boss", 1)
-                            misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
-                            activated = true
+                            if not net.online or net.localPlayer == player then
+                                if net.host then
+                                    local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                                    misc.director:set("spawn_boss", 1)
+                                    misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
+                                    teleporter:getData().activated = true
+                                else
+                                    teleporterPacket:sendAsClient(teleporter:get("id"))
+                                end
+                            end
                         end
                     end
                 end
