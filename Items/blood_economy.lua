@@ -54,6 +54,7 @@ registercallback("preHit", function(bullet, hit)
         end
 end)
 
+-- TODO: maybe clamp it so the player can't generate way more gold than the enemy has HP when dealing high damage
 function createGold (player, bullet)
     local count = player:countItem(item)
 

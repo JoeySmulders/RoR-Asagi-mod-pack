@@ -25,6 +25,8 @@ registercallback("postSelection", function()
     end
 end)
 
+local teleporters = Object.find("Teleporter")
+
 -- Make the timer go faster
 registercallback("onStep", function()
     if artifact.active then
@@ -38,6 +40,10 @@ registercallback("onStep", function()
                 --player:set("pVmax", player:get("pVmax") * speedMultiplier)
                 player:getData().speedSet = true
             end
+        end
+
+        for i, teleporter in pairs(teleporters:findMatchingOp("active", "==", 1)) do
+            teleporter:set("time", teleporter:get("time") + speedMultiplier - 1)
         end
     end
 end)

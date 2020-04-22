@@ -41,7 +41,6 @@ registercallback("onStep", function()
 
                 if loop == false then
                     for i, player in ipairs(misc.players) do
-                        
                         if player:control("enter") == input.PRESSED and player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
                             local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
                             misc.director:set("spawn_boss", 1)
@@ -69,7 +68,6 @@ end)
 
 
 -- Respawn a command chest if the user using it dies, and be able to back out of opening one
-
 local crateRespawn = true
 local crateBackout = true
 local activeCrates = {}
@@ -163,4 +161,36 @@ registercallback("onStep", function()
 end)
 
 
+-- Teleporter crate stuff
 
+local crateTeleporter = true
+
+-- Starstorm rules
+registercallback("postSelection", function()
+    crateTeleporter = Rule.getSetting(Rule.find("Crate on Teleporter"))
+end)
+
+
+registercallback("onPlayerStep", function(player)
+    if crateTeleporter then
+        for i, teleporter in pairs(teleporters:findMatchingOp("active", "==", 1)) do
+            if teleporter:get("time") < 1 then
+                for i, crate in ipairs(crates:findAll()) do
+                    if Object.findInstance(crate:get("owner")) == player then
+                        teleporter:set("active", 0)
+                    end
+                end
+            end
+        end
+
+        for i, teleporter in pairs(teleporters:findMatchingOp("active", "==", 4)) do
+            for i, crate in ipairs(crates:findAll()) do
+                if Object.findInstance(crate:get("owner")) == player then
+                    teleporter:set("active", 3)
+                    teleporter:set("locked", 0)
+                end
+            end
+        end
+    end
+
+end)
