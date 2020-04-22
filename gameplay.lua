@@ -34,7 +34,9 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
             teleporter:getData().activated = true
             teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
         else
-            teleporter[1]:getData().activated = true
+            teleporter = teleporter[1]
+            teleporter:getData().activated = true
+            teleporter:getData().inTeleporter = false
         end
     end 
 end)
@@ -71,6 +73,7 @@ registercallback("onStep", function()
                                     misc.director:set("spawn_boss", 1)
                                     misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
                                     teleporter:getData().activated = true
+                                    teleporter:getData().inTeleporter = false
                                     teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
                                 else
                                     teleporterPacket:sendAsClient(teleporter:get("active"))
