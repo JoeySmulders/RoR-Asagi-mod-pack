@@ -46,20 +46,19 @@ end)
 registercallback("preHit", function(bullet, hit)
     local player = bullet:getParent()
         if type(player) == "PlayerInstance" then
-            createGold(player, bullet)
+            createGold(player, bullet, hit)
         else 
             if type(hit) == "PlayerInstance" then
-               createGold(hit, bullet)
+               createGold(hit, bullet, hit)
             end
         end
 end)
 
--- TODO: maybe clamp it so the player can't generate way more gold than the enemy has HP when dealing high damage
-function createGold (player, bullet)
+function createGold (player, bullet, hit)
     local count = player:countItem(item)
 
     if count > 0 then
-        bullet:set("gold_on_hit", math.sqrt(bullet:get("damage") * count * 0.1)) -- gold_on_hit produces the number squared amount of coins
+        bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.1), 0, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
     end
 
 end

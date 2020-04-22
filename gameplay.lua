@@ -21,6 +21,7 @@ registercallback("onStageEntry", function()
     end
 end)
 
+-- Sync teleporter challenge
 teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, teleporterState)
     local teleporter = teleporters:findMatchingOp("active", "==", teleporterState)
 
@@ -29,7 +30,7 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
             teleporter = teleporter[1]
             local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
             misc.director:set("spawn_boss", 1)
-            misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
+            misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000) -- Change this so it scales with difficulty and player count
             teleporter:getData().activated = true
             teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
         else
@@ -70,7 +71,7 @@ registercallback("onStep", function()
                                     misc.director:set("spawn_boss", 1)
                                     misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
                                     teleporter:getData().activated = true
-                                    --teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
+                                    teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
                                 else
                                     teleporterPacket:sendAsClient(teleporter:get("active"))
                                 end
