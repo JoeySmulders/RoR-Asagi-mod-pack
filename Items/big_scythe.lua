@@ -16,6 +16,9 @@ ItemPool.find("enigma", "vanilla"):add(item)
 
 scytheAttack = net.Packet("Big Scythe Packet", function(player, enemyX, enemyY)
     player:fireExplosion(enemyX, enemyY, 5 / 19, 5 / 4, 1000, nil, nil, DAMAGER_NO_PROC)
+    if net.host then
+        teleporterPacket:sendAsHost(net.EXCLUDE, player, enemyX, enemyY)
+    end
 end)
 
 item:addCallback("use", function(player, embryo)

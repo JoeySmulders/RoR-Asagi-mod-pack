@@ -21,6 +21,8 @@ registercallback("onStageEntry", function()
     end
 end)
 
+-- TODO: use netInstance stuff so you can actually sync the teleporter activated/inTeleporter values
+
 -- Sync teleporter challenge
 teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, teleporterState)
     local teleporter = teleporters:findMatchingOp("active", "==", teleporterState)
