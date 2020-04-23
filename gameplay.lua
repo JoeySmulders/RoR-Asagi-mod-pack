@@ -121,14 +121,15 @@ end)
 crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, crateType, crateX, crateY)
 
     local crate = crateNet:resolve()
+    log(crate)
     crate:set("active", 0)
     crate:delete()
-    crateType:create(oldPositionX, oldPositionY)
+    local newCrate = crateType:create(crateX, crateY)
     player:set("activity", 0)
     player:set("activity_type", 0)
 
     if net.host then
-        crateNetBackout:sendAsHost(net.EXCLUDE, player, crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
+        crateNetBackout:sendAsHost(net.ALL, nil, crateNet, crateType, crateX, crateY)
     end
 end)
 
@@ -177,18 +178,21 @@ registercallback("onStep", function()
 
                             local oldPositionX = crate.x 
                             local oldPositionY = crate.y
+                            
+                            local crateNet = crate:getNetIdentity()
 
                             if net.host then
-                                crateNetBackout:sendAsHost(net.ALL, nil, crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
+                                data.crate:create(oldPositionX, oldPositionY)
+                                data.player:set("activity", 0)
+                                data.player:set("activity_type", 0)
+                                crateNetBackout:sendAsHost(net.ALL, nil, crateNet, data.crate, oldPositionX, oldPositionY)
                             else
-                                crateNetBackout:sendAsClient(crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
+                                crateNetBackout:sendAsClient(crateNet, data.crate, oldPositionX, oldPositionY)
                             end
 
                             crate:set("active", 0)
                             crate:delete()
-                            data.crate:create(oldPositionX, oldPositionY)
-                            data.player:set("activity", 0)
-                            data.player:set("activity_type", 0)
+
                         end
                     end
                     data.player:getData().crateActive = false
