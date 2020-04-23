@@ -21,6 +21,7 @@ registercallback("postSelection", function()
         speedMultiplier = Rule.getSetting(Rule.find("Turbo Artifact speed"))
         for i, player in ipairs(misc.players) do
             turbo(player)
+            player:getData().speedUpTimer = {0,0,0,0,0}
         end
     end
 end)
@@ -33,12 +34,24 @@ registercallback("onStep", function()
         if misc.director:getAlarm(0) <= (60 - ( 60 / speedMultiplier)) then
             misc.director:setAlarm(0, 1)
         end
-        -- Forced to set player speed in onStep due to weird init stuff
+        
         for i, player in ipairs(misc.players) do
-            if not player:getData().speedSet and player:get("pHmax") ~= 0 then
-                player:set("pHmax", player:get("pHmax") * speedMultiplier)
-                --player:set("pVmax", player:get("pVmax") * speedMultiplier)
-                player:getData().speedSet = true
+            if player:getData().speedUpTimer then
+                -- TODO: skill cooldowns don't go faster than 2x speed
+                -- Speed up skill cooldowns (but not z skill) (alarms only work in ints, so use a counting system)
+                for i = 3, 5, 1 do
+                    if player:getAlarm(i) > 0 then
+                        player:getData().speedUpTimer[i] = player:getData().speedUpTimer[i] + (speedMultiplier - 1)
+                        if player:getData().speedUpTimer[i] >= 1 then
+                            player:setAlarm(i, player:getAlarm(i) - 1)
+                            player:getData().speedUpTimer[i] = 0 
+                        end
+                        if player:getData().speedUpTimer[i] <= -1 then
+                            player:setAlarm(i, player:getAlarm(i) + 1) 
+                            player:getData().speedUpTimer[i] = 0
+                        end
+                    end
+                end
             end
         end
 
@@ -54,6 +67,8 @@ registercallback("onActorInit", function(actor)
         -- If starstorm isn't loaded, then apply this to all actors, otherwise apply players through postSelection
         if type(actor) ~= "PlayerInstance" or not modloader.checkMod("StarStorm") then
             turbo(actor)
+            actor:getData().speedUpTimer = {0,0,0,0,0}
+            
         end
     end
 end)
@@ -66,6 +81,7 @@ function turbo (actor)
 
     actor:set("speed", actor:get("speed") * speedMultiplier)
     actor:set("hp_regen", actor:get("hp_regen") * speedMultiplier)
+
     --actor:set("pGravity1", actor:get("pGravity1") * speedMultiplier) -- Changing gravity and pVmax values by the speedmultiplier doesn't work well
     --actor:set("pGravity2", actor:get("pGravity2") * speedMultiplier)
 end
