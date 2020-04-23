@@ -125,13 +125,20 @@ crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, cr
         crate:set("active", 0)
         crate:delete()
     end
-    
+
     player:set("activity", 0)
     player:set("activity_type", 0)
 
     if net.host then
         local newCrate = crateType:create(crateX, crateY)
-        crateNetBackout:sendAsHost(net.ALL, nil, crateNet, crateType, crateX, crateY)
+        crateNetBackout:sendAsHost(net.EXCLUDE, player, crateNet, crateType, crateX, crateY)
+    end
+end)
+
+crateDeath = net.Packet("Crate Death Sync", function(player, crateType, xPosition, yPosition)
+    if net.host then
+        data.crate:create(xPosition, yPosition)
+        --crateDeath:sendAsHost(net.EXCLUDE, player, crateType, xOffset)
     end
 end)
 
@@ -142,7 +149,7 @@ registercallback("onStep", function()
         for i, crate in ipairs(crates:findMatchingOp("active", "==", 1)) do
             local player = Object.findInstance(crate:get("owner"))
             if player and player:getData().crateActive == false then
-                table.insert(activeCrates, {["player"] = player, ["crate"] = crate:getObject()})
+                table.insert(activeCrates, {["player"] = player, ["crate"] = crate:getObject(), ["crateX"] = crate.x, ["crateY"] = crate.y})
             end
         end
 
@@ -157,8 +164,14 @@ registercallback("onStep", function()
         if crateRespawn then
             for key, data in pairs(activeCrates) do
                 if data.player:get("dead") == 1 then 
-                    local xOffset = math.random(-5,5)
-                    data.crate:create(data.player.x + xOffset, data.player.y)
+
+                    if net.host then
+                        data.crate:create(data.crateX, data.crateY)
+                        --crateDeath:sendAsHost(net.ALL, nil, data.crate, xOffset)
+                    else 
+                        crateDeath:sendAsClient(data.crate, data.crateX, data.crateY)
+                    end
+
                     activeCrates[key] = nil  
                 else
                     if data.player:get("activity") ~= 95 then
