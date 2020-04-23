@@ -118,8 +118,18 @@ registercallback("onStageEntry", function()
 end)
 
 
-crateNetBackout = net.Packet("Crate Backout Sync", function(player)
+crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, crateType, crateX, crateY)
 
+    local crate = crateNet:resolve()
+    crate:set("active", 0)
+    crate:delete()
+    crateType:create(oldPositionX, oldPositionY)
+    player:set("activity", 0)
+    player:set("activity_type", 0)
+
+    if net.host then
+        crateNetBackout:sendAsHost(net.EXCLUDE, player, crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
+    end
 end)
 
 registercallback("onStep", function()
@@ -164,8 +174,16 @@ registercallback("onStep", function()
 
                     for i, crate in ipairs(crates:findMatchingOp("active", ">=", 1)) do
                         if Object.findInstance(crate:get("owner")) == data.player then
+
                             local oldPositionX = crate.x 
                             local oldPositionY = crate.y
+
+                            if net.host then
+                                crateNetBackout:sendAsHost(net.ALL, nil, crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
+                            else
+                                crateNetBackout:sendAsClient(crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
+                            end
+
                             crate:set("active", 0)
                             crate:delete()
                             data.crate:create(oldPositionX, oldPositionY)

@@ -66,6 +66,6 @@ function turbo (actor)
 
     actor:set("speed", actor:get("speed") * speedMultiplier)
     actor:set("hp_regen", actor:get("hp_regen") * speedMultiplier)
-    --actor:set("pGravity1", actor:get("pGravity1") * speedMultiplier) -- Changing gravity has the wrong effect and doesn't actually speed up anything, just makes you jump lower
+    --actor:set("pGravity1", actor:get("pGravity1") * speedMultiplier) -- Changing gravity and pVmax values by the speedmultiplier doesn't work well
     --actor:set("pGravity2", actor:get("pGravity2") * speedMultiplier)
 end
