@@ -23,12 +23,13 @@ local jump = ParticleType.new("Thief Jump")
 jump:sprite(jumpSprite, true, true, false)
 jump:life(0.3 * 60, 0.3 * 60)
 
-particleSync = net.Packet("Thieves Hat Particle Sync", function(player, xOffset, playerVSpeed)
+particleSync = net.Packet("Thieves Hat Particle Sync", function(player, xOffset, playerVSpeed, jumpCount)
     jump:burst("middle", player.x + xOffset, player.y, 1)
     player:set("pVspeed", playerVSpeed)
+    player:set("jump_count", jumpCount) -- Jumping is vanilla synced so we have to tell the other clients to know if we can jump again or not or it wil desync
 
     if net.host then
-        particleSync:sendAsHost(net.EXCLUDE, player, playerVSpeed)
+        particleSync:sendAsHost(net.EXCLUDE, player, playerVSpeed, jumpCount)
     end
 end)
 
@@ -71,9 +72,9 @@ registercallback("onPlayerStep", function(player)
                 player:set("jump_count", player:get("jump_count") + 1)
 
                 if net.host then
-                    particleSync:sendAsHost(net.ALL, nil, xOffset, player:get("pVspeed"))
+                    particleSync:sendAsHost(net.ALL, nil, xOffset, player:get("pVspeed"), player:get("jump_count"))
                 else
-                    particleSync:sendAsClient(xOffset, player:get("pVspeed"))
+                    particleSync:sendAsClient(xOffset, player:get("pVspeed"), player:get("jump_count"))
                 end
             end
 
@@ -98,12 +99,11 @@ registercallback("onPlayerStep", function(player)
                 if player:control("left") == input.NEUTRAL then
                     player:set("activity_type", 0)
                     player:set("bamboo_boost", 0)
+                end
+                if net.host then
+                    thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
                 else
-                    if net.host then
-                        thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-                    else
-                        thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-                    end
+                    thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
                 end
             end
 
