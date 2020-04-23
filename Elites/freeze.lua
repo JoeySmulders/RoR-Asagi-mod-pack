@@ -36,7 +36,7 @@ end)
 registercallback("onPlayerStep", function(player)
     -- Check for collision with wormhead or wormbody if they are freezing
     for i, worm in ipairs(wormHead:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
-        if player:collidesWith(worm, player.x, player.y) then
+        if player:collidesWith(worm, player.x, player.y) and player:get("invincible") == 0 then
             if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
                 player:getData().frozen = 1
                 player:getData().frozenTimer = freezeTimer
@@ -44,7 +44,7 @@ registercallback("onPlayerStep", function(player)
         end
     end
     for i, worm in ipairs(wormBody:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
-        if player:collidesWith(worm, player.x, player.y) then
+        if player:collidesWith(worm, player.x, player.y) and player:get("invincible") == 0 then
             if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
                 player:getData().frozen = 1
                 player:getData().frozenTimer = freezeTimer
@@ -83,7 +83,7 @@ end)
 registercallback("onDraw", function()
     for i, player in ipairs(misc.players) do
         -- Draw the frozen sprite on top of the player when they get frozen by a Freezing elite
-        if player:getData().frozen == 1 then
+        if player:getData().frozen == 1 and player:get("dead") ~= 1 then
             graphics.drawImage{sprFrozen, player.x, player.y,
             width = player.sprite.width + 5,
             height = player.sprite.height + 5

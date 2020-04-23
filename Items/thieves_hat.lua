@@ -48,7 +48,7 @@ registercallback("onPlayerStep", function(player)
     
     if count > 0 then
 
-        -- TODO: Make the item work with controller?
+        -- TODO: Make the item work with controller? (use the moveLeft and moveRight variables)
         -- TODO: Figure out how to actually make ropes stop acting weird when you have this item
         if player:get("activity") == 30 then
             player:set("bamboo_boost", 0)
