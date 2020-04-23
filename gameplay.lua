@@ -135,13 +135,6 @@ crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, cr
     end
 end)
 
-crateDeath = net.Packet("Crate Death Sync", function(player, crateType, xPosition, yPosition)
-    if net.host then
-        data.crate:create(xPosition, yPosition)
-        --crateDeath:sendAsHost(net.EXCLUDE, player, crateType, xOffset)
-    end
-end)
-
 registercallback("onStep", function()
     if crateRespawn or crateBackout then
 
@@ -165,11 +158,9 @@ registercallback("onStep", function()
             for key, data in pairs(activeCrates) do
                 if data.player:get("dead") == 1 then 
 
+                    -- Crates are naturally synced, so only the host has to create a new one for it to work
                     if net.host then
                         data.crate:create(data.crateX, data.crateY)
-                        --crateDeath:sendAsHost(net.ALL, nil, data.crate, xOffset)
-                    else 
-                        crateDeath:sendAsClient(data.crate, data.crateX, data.crateY)
                     end
 
                     activeCrates[key] = nil  
@@ -234,7 +225,7 @@ registercallback("onStep", function()
     end
 end)
 
-
+--[[]
 -- Teleporter crate stuff
 
 local crateTeleporter = true
@@ -268,3 +259,5 @@ registercallback("onPlayerStep", function(player)
     end
 
 end)
+
+--]]

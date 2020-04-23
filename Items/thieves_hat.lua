@@ -23,6 +23,20 @@ local jump = ParticleType.new("Thief Jump")
 jump:sprite(jumpSprite, true, true, false)
 jump:life(0.3 * 60, 0.3 * 60)
 
+particleSync = net.Packet("Thieves Hat Particle Sync", function(player, xOffset)
+    jump:burst("middle", player.x + xOffset, player.y, 1)
+    if net.host then
+        particleSync:sendAsHost(net.EXCLUDE, player)
+    end
+end)
+
+thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed)
+    player:set("pHspeed", playerHSpeed)
+    if net.host then
+        thievesHatSync:sendAsHost(net.EXCLUDE, player, playerHSpeed)
+    end
+end)
+
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
     
@@ -36,13 +50,23 @@ registercallback("onPlayerStep", function(player)
             -- When you jump in midair while having a jump available and are holding either left or right you get the boost jump
             if player:control("jump") == input.PRESSED and player:get("free") == 1 and player:get("jump_count") < player:get("feather") 
             and (player:control("left") == input.HELD or player:control("right") == input.HELD) then
+                local xOffset = 0
                 if player:getFacingDirection() == 0 then
                     player:set("bamboo_boost", 1)
-                    jump:burst("middle", player.x - 5, player.y, 1)
+                    jump:burst("middle", player.x - 5, player.y, 1)           
+                    xOffset = -5        
                 else
                     player:set("bamboo_boost", 2)
                     jump:burst("middle", player.x + 5, player.y, 1)
+                    xOffset = 5
                 end 
+
+                if net.host then
+                    particleSync:sendAsHost(net.ALL, nil, xOffset)
+                else
+                    particleSync:sendAsClient(xOffset)
+                end
+
                 player:set("moveUp", 1) 
                 player:set("pVspeed", player:get("pVmax") * -1)
                 player:set("jump_count", player:get("jump_count") + 1)
@@ -64,6 +88,12 @@ registercallback("onPlayerStep", function(player)
                 if player:control("left") == input.NEUTRAL then
                     player:set("activity_type", 0)
                     player:set("bamboo_boost", 0)
+                else
+                    if net.host then
+                        thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"))
+                    else
+                        thievesHatSync:sendAsClient(player:get("pHspeed"))
+                    end
                 end
             end
 

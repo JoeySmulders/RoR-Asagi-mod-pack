@@ -51,8 +51,10 @@ crateBackout.type = "checkbox"
 crateBackout.default = true
 crateBackout.tooltip = "Jumping while using a command crate will back out of using it"
 
+--[[
 local crateTeleporter = Rule.new("Crate on Teleporter")
 crateTeleporter.id = 9
 crateTeleporter.type = "checkbox"
 crateTeleporter.default = true
 crateTeleporter.tooltip = "Using a command crate that is overlapping with the teleporter will no longer activate the teleporter"
+--]]
