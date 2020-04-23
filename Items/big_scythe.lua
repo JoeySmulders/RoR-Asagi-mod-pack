@@ -15,7 +15,7 @@ ItemPool.find("enigma", "vanilla"):add(item)
 -- TODO: add a visual effect for it
 
 scytheAttack = net.Packet("Big Scythe Packet", function(player, enemyX, enemyY)
-    player:fireExplosion(enemyX, enemyY, 5 / 19, 5 / 4, 1000, nil, nil, DAMAGER_NO_PROC)
+    player:fireExplosion(enemyX, enemyY, 10 / 19, 10 / 4, 1000, nil, nil, DAMAGER_NO_PROC)
     if net.host then
         teleporterPacket:sendAsHost(net.EXCLUDE, player, enemyX, enemyY)
     end
@@ -44,7 +44,7 @@ item:addCallback("use", function(player, embryo)
 
                 for i, enemy in ipairs(currentEnemies) do
                     if i == enemyTarget then
-                        player:fireExplosion(enemy.x, enemy.y, 5 / 19, 5 / 4, 1000, nil, nil, DAMAGER_NO_PROC)
+                        player:fireExplosion(enemy.x, enemy.y, 10 / 19, 10 / 4, 1000, nil, nil, DAMAGER_NO_PROC)
 
                         if net.host then
                             scytheAttack:sendAsHost(net.ALL, nil, enemy.x, enemy.x)

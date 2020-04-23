@@ -46,7 +46,11 @@ end)
 
 -- Setup the star timer when picking up the item
 item:addCallback("pickup", function(player)
-	player:set("log-star_timer", 10 * 60)
+    local count = player:countItem(item)
+
+    if count == 1 then
+        player:set("log-star_timer", 10 * 60)
+    end
 end)
 
 registercallback("onPlayerStep", function(player)

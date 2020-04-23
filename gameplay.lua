@@ -32,7 +32,7 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
             teleporter = teleporter[1]
             local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
             misc.director:set("spawn_boss", 1)
-            misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000) -- Change this so it scales with difficulty and player count
+            misc.director:set("points", misc.director:get("points") + 1000 + (misc.director:get("stages_passed") * 500) + (#misc.players * 100)) -- Change this so it also scales with difficulty 
             teleporter:getData().activated = true
             teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
         else
@@ -73,7 +73,7 @@ registercallback("onStep", function()
                                 if net.host then
                                     local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
                                     misc.director:set("spawn_boss", 1)
-                                    misc.director:set("points", misc.director:get("points") + 1500 + misc.director:get("stages_passed") * 1000)
+                                    misc.director:set("points", misc.director:get("points") + 1000 + (misc.director:get("stages_passed") * 500) + (#misc.players * 100)) -- Change this so it also scales with difficulty 
                                     teleporter:getData().activated = true
                                     teleporter:getData().inTeleporter = false
                                     teleporterPacket:sendAsHost(net.ALL, nil, teleporterState)
@@ -115,6 +115,11 @@ registercallback("onStageEntry", function()
         player:getData().crateActive = false
     end
     activeCrates = {}
+end)
+
+
+crateNetBackout = net.Packet("Crate Backout Sync", function(player)
+
 end)
 
 registercallback("onStep", function()

@@ -15,9 +15,9 @@ registercallback("preHit", function(bullet, hit)
         local count = hit:countItem(item)
 
         if count > 0 then
-            if hit:get("pHspeed") == 0 and hit:get("pVspeed") == 0 and hit:get("activity") == 0 then -- Maybe just change this item to work like fungus?
-                bullet:set("damage", bullet:get("damage") * 0.2)
-                bullet:set("damage_fake", bullet:get("damage_fake") * 0.2)
+            if hit:get("pHspeed") == 0 and hit:get("pVspeed") == 0 and hit:get("activity") == 0 then
+                bullet:set("damage", bullet:get("damage") * (0.23 - (math.clamp(count, 1, 4) * 0.03)))
+                bullet:set("damage_fake", bullet:get("damage_fake") * (0.23 - (math.clamp(count, 1, 4) * 0.03)))
             end
         end
     end
