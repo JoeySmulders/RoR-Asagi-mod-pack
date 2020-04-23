@@ -32,12 +32,13 @@ particleSync = net.Packet("Thieves Hat Particle Sync", function(player, xOffset,
     end
 end)
 
-thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed, playerVSpeed)
+thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed, playerVSpeed, activityType)
     player:set("pHspeed", playerHSpeed)
     player:set("pVspeed", playerVSpeed)
+    player:set("activity_type", activityType)
 
     if net.host then
-        thievesHatSync:sendAsHost(net.EXCLUDE, player, playerHSpeed)
+        thievesHatSync:sendAsHost(net.EXCLUDE, player, playerHSpeed, activityType)
     end
 end)
 
@@ -85,9 +86,9 @@ registercallback("onPlayerStep", function(player)
                     player:set("bamboo_boost", 0)
                 end
                 if net.host then
-                    thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"))
+                    thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
                 else
-                    thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"))
+                    thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
                 end
             end
             -- If jumping to the left
@@ -99,9 +100,9 @@ registercallback("onPlayerStep", function(player)
                     player:set("bamboo_boost", 0)
                 else
                     if net.host then
-                        thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"))
+                        thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
                     else
-                        thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"))
+                        thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
                     end
                 end
             end
@@ -112,6 +113,12 @@ registercallback("onPlayerStep", function(player)
                     player:set("activity_type", 0)
                 end
                 player:set("bamboo_boost", 0)
+
+                if net.host then
+                    thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+                else
+                    thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+                end
             end
         end
     end
