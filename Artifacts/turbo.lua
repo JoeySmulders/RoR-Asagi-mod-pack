@@ -12,9 +12,6 @@ artifact.loadoutText = "Everything is 20% faster."
 
 local speedMultiplier = 1.2
 
--- TODO: make teleporter timer go faster
--- TODO: make cooldowns go faster
-
 -- Starstorm rules
 registercallback("postSelection", function()
     if artifact.active then
