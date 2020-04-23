@@ -121,14 +121,16 @@ end)
 crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, crateType, crateX, crateY)
 
     local crate = crateNet:resolve()
-    log(crate)
-    crate:set("active", 0)
-    crate:delete()
-    local newCrate = crateType:create(crateX, crateY)
+    if crate then
+        crate:set("active", 0)
+        crate:delete()
+    end
+    
     player:set("activity", 0)
     player:set("activity_type", 0)
 
     if net.host then
+        local newCrate = crateType:create(crateX, crateY)
         crateNetBackout:sendAsHost(net.ALL, nil, crateNet, crateType, crateX, crateY)
     end
 end)
@@ -181,10 +183,11 @@ registercallback("onStep", function()
                             
                             local crateNet = crate:getNetIdentity()
 
+                            data.player:set("activity", 0)
+                            data.player:set("activity_type", 0)
+
                             if net.host then
                                 data.crate:create(oldPositionX, oldPositionY)
-                                data.player:set("activity", 0)
-                                data.player:set("activity_type", 0)
                                 crateNetBackout:sendAsHost(net.ALL, nil, crateNet, data.crate, oldPositionX, oldPositionY)
                             else
                                 crateNetBackout:sendAsClient(crateNet, data.crate, oldPositionX, oldPositionY)
