@@ -45,22 +45,27 @@ end)
 
 registercallback("preHit", function(bullet, hit)
     local player = bullet:getParent()
+    local count = 0
+
         if type(player) == "PlayerInstance" then
-            createGold(player, bullet, hit)
+            count = player:countItem(item)
+
+            if count > 0 then
+                createGold(player, bullet, hit, count)
+            end
         else 
             if type(hit) == "PlayerInstance" then
-               createGold(hit, bullet, hit)
+                count = hit:countItem(item)
+
+                if count > 0 then
+                    createGold(hit, bullet, hit, count)
+                end
             end
         end
 end)
 
-function createGold (player, bullet, hit)
-    local count = player:countItem(item)
-
-    if count > 0 then
-        bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.1), 0, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
-    end
-
+function createGold (player, bullet, hit, count)
+    bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.1), 0, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
 end
 
 item:setLog{

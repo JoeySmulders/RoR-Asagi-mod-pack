@@ -43,6 +43,20 @@ thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed, p
     end
 end)
 
+function boostJump(player, horizontalMovement, controlSide)
+    player:set("activity_type", 3)
+    player:set("pHspeed", player:get("pHmax") * horizontalMovement)
+    if player:control(controlSide) == input.NEUTRAL then
+        player:set("activity_type", 0)
+        player:set("bamboo_boost", 0)
+    end
+    if net.host then
+        thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+    else
+        thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+    end
+end
+
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
     
@@ -80,31 +94,12 @@ registercallback("onPlayerStep", function(player)
 
             -- If jumping to the right
             if player:get("bamboo_boost") == 1 and (player:get("activity_type") == 3 or player:get("activity_type") == 0) then
-                player:set("activity_type", 3)
-                player:set("pHspeed", player:get("pHmax") * 1.5 + (0.5 * count))
-                if player:control("right") == input.NEUTRAL then
-                    player:set("activity_type", 0)
-                    player:set("bamboo_boost", 0)
-                end
-                if net.host then
-                    thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-                else
-                    thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-                end
+                boostJump(player, 1.5 + (0.5 * count), "right")
             end
+
             -- If jumping to the left
             if player:get("bamboo_boost") == 2 and (player:get("activity_type") == 3 or player:get("activity_type") == 0) then
-                player:set("activity_type", 3)
-                player:set("pHspeed", player:get("pHmax") * -1.5 - (0.5 * count))
-                if player:control("left") == input.NEUTRAL then
-                    player:set("activity_type", 0)
-                    player:set("bamboo_boost", 0)
-                end
-                if net.host then
-                    thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-                else
-                    thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-                end
+                boostJump(player, -1.5 - (0.5 * count), "left")
             end
 
             -- Disable boost when you hit the floor

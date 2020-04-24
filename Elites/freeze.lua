@@ -34,20 +34,24 @@ end)
 
 
 registercallback("onPlayerStep", function(player)
-    -- Check for collision with wormhead or wormbody if they are freezing
-    for i, worm in ipairs(wormHead:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
-        if player:collidesWith(worm, player.x, player.y) and player:get("invincible") == 0 then
-            if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
-                player:getData().frozen = 1
-                player:getData().frozenTimer = freezeTimer
+    local currentWorm = wormHead:findAll()
+
+    if #currentWorm > 0 then
+        -- Check for collision with wormhead or wormbody if they are freezing
+        for i, worm in ipairs(wormHead:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
+            if player:collidesWith(worm, player.x, player.y) and player:get("invincible") == 0 then
+                if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
+                    player:getData().frozen = 1
+                    player:getData().frozenTimer = freezeTimer
+                end
             end
         end
-    end
-    for i, worm in ipairs(wormBody:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
-        if player:collidesWith(worm, player.x, player.y) and player:get("invincible") == 0 then
-            if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
-                player:getData().frozen = 1
-                player:getData().frozenTimer = freezeTimer
+        for i, worm in ipairs(wormBody:findMatchingOp("elite_type", "==", elite.Freezing.id)) do
+            if player:collidesWith(worm, player.x, player.y) and player:get("invincible") == 0 then
+                if player:getData().frozenTimer <= freezeTimer and player:getData().frozen ~= 1 then
+                    player:getData().frozen = 1
+                    player:getData().frozenTimer = freezeTimer
+                end
             end
         end
     end

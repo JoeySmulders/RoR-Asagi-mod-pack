@@ -14,6 +14,7 @@ local objStar = Object.new("Star")
 objStar.sprite = Sprite.load("Star", "Items/sprites/star", 1, 5, 5)
 objStar.depth = 1
 local rotationSpeed = 5
+local direction = 0
 
 -- Star creation and variables
 objStar:addCallback("create", function(objStar)
@@ -55,7 +56,6 @@ end)
 
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
-    local direction = 0
 
     if count > 0 then
         if player:get("log-star_timer") <= 0 then
@@ -65,6 +65,7 @@ registercallback("onPlayerStep", function(player)
                 star:set("parent", player.id)
                 direction = direction + 45
             end
+            direction = 0
             -- Stacking item reduces cooldown by 1 second, to 1 second max.
             player:set("log-star_timer", (11 - math.min(count, 10)) * 60)
         end
