@@ -25,6 +25,8 @@ end)
 
 local teleporters = Object.find("Teleporter")
 
+-- TODO : speed up use item cooldowns
+
 -- Make the timer go faster
 registercallback("onStep", function()
     if artifact.active then
