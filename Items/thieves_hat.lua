@@ -43,7 +43,6 @@ thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed, p
     end
 end)
 
--- TODO: Don't make it send packets every frame, make it only send packets when changing directions and stuff
 function boostJump(player, horizontalMovement, controlSide)
     player:set("activity_type", 3)
     player:set("pHspeed", player:get("pHmax") * horizontalMovement)
