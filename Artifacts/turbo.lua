@@ -10,6 +10,8 @@ artifact.unlocked = true
 artifact.loadoutSprite = Sprite.load("/Artifacts/sprites/turbo.png", 2, 18, 18)
 artifact.loadoutText = "Everything is 20% faster."
 
+local teleporters = Object.find("Teleporter")
+
 local speedMultiplier = 1.2
 
 -- Starstorm rules
@@ -23,9 +25,19 @@ registercallback("postSelection", function()
     end
 end)
 
-local teleporters = Object.find("Teleporter")
-
--- TODO : speed up use item cooldowns
+function timerSpeedUp(player, alarmId, timerId)
+    if player:getAlarm(alarmId) > 0 then
+        player:getData().speedUpTimer[timerId] = player:getData().speedUpTimer[timerId] + (speedMultiplier - 1)
+        if player:getData().speedUpTimer[timerId] >= 1 then
+            player:setAlarm(alarmId, player:getAlarm(alarmId) - 1)
+            player:getData().speedUpTimer[timerId] = 0 
+        end
+        if player:getData().speedUpTimer[timerId] <= -1 then
+            player:setAlarm(alarmId, player:getAlarm(alarmId) + 1)
+            player:getData().speedUpTimer[timerId] = 0 
+        end
+    end
+end
 
 -- Make the timer go faster
 registercallback("onStep", function()
@@ -34,22 +46,16 @@ registercallback("onStep", function()
             misc.director:setAlarm(0, 1)
         end
         
+        -- TODO: skill cooldowns don't go faster than 2x speed
         for i, player in ipairs(misc.players) do
             if player:getData().speedUpTimer then
-                -- TODO: skill cooldowns don't go faster than 2x speed
+
+                -- Speeds up use item cooldown
+                timerSpeedUp(player, 0, 1)
+                
                 -- Speed up skill cooldowns (but not z skill) (alarms only work in ints, so use a counting system)
                 for i = 3, 5, 1 do
-                    if player:getAlarm(i) > 0 then
-                        player:getData().speedUpTimer[i] = player:getData().speedUpTimer[i] + (speedMultiplier - 1)
-                        if player:getData().speedUpTimer[i] >= 1 then
-                            player:setAlarm(i, player:getAlarm(i) - 1)
-                            player:getData().speedUpTimer[i] = 0 
-                        end
-                        if player:getData().speedUpTimer[i] <= -1 then
-                            player:setAlarm(i, player:getAlarm(i) + 1) 
-                            player:getData().speedUpTimer[i] = 0
-                        end
-                    end
+                    timerSpeedUp(player, i, i)
                 end
             end
         end
@@ -67,7 +73,6 @@ registercallback("onActorInit", function(actor)
         if type(actor) ~= "PlayerInstance" or not modloader.checkMod("StarStorm") then
             turbo(actor)
             actor:getData().speedUpTimer = {0,0,0,0,0}
-            
         end
     end
 end)

@@ -43,17 +43,23 @@ thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed, p
     end
 end)
 
+-- TODO: Don't make it send packets every frame, make it only send packets when changing directions and stuff
 function boostJump(player, horizontalMovement, controlSide)
     player:set("activity_type", 3)
     player:set("pHspeed", player:get("pHmax") * horizontalMovement)
     if player:control(controlSide) == input.NEUTRAL then
         player:set("activity_type", 0)
         player:set("bamboo_boost", 0)
+        player:getData().changedBoostDirection = true
     end
-    if net.host then
-        thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
-    else
-        thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+
+    if player:getData().changedBoostDirection == true then
+        if net.host then
+            thievesHatSync:sendAsHost(net.ALL, nil, player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+        else
+            thievesHatSync:sendAsClient(player:get("pHspeed"), player:get("pVspeed"), player:get("activity_type"))
+        end
+        player:getData().changedBoostDirection = false
     end
 end
 
@@ -63,7 +69,7 @@ registercallback("onPlayerStep", function(player)
     if count > 0 then
 
         -- TODO: Make the item work with controller? (use the moveLeft and moveRight variables)
-        -- TODO: Figure out how to actually make ropes stop acting weird when you have this item
+        -- TODO: Figure out how to actually make ropes stop acting weird when you have this item (probably add a timer that disables the boost jump while on a rope)
         if player:get("activity") == 30 then
             player:set("bamboo_boost", 0)
         else
@@ -90,6 +96,8 @@ registercallback("onPlayerStep", function(player)
                 else
                     particleSync:sendAsClient(xOffset, player:get("pVspeed"), player:get("jump_count"))
                 end
+
+                player:getData().changedBoostDirection = true
             end
 
             -- If jumping to the right
