@@ -29,7 +29,7 @@ registercallback("onHit", function(bullet, hit)
                 hit:set("hp", hit:get("hp") + bullet:get("damage"))
             end
 
-            local timer = (1 + count) * 60 -- Stacking item increases delay by 1 second per item
+            local timer = (1 + count) -- Stacking item increases delay by 1 second per item
 
             table.insert(hit:getData().damageTable, {["timer"] = timer, ["damage"] = bullet:get("damage")})
         end
@@ -39,32 +39,35 @@ end)
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
 
-    local tableCount = 0
-
-    -- TODO: Change it so it only checks once a second for these values instead of every fucking frame
     if count > 0 then
-
-        if #player:getData().damageTable > 0 then
-    
-            for i, data in ipairs(player:getData().damageTable) do
-                if data.timer <= 0 then
-                    if player:get("invincible") == 0 then
-                        if player:get("shield") > 0 then
-                            player:set("shield", player:get("shield") - data.damage)
-                            player:set("shield_cooldown", 7 * 60)
-                            misc.damage(data.damage, player.x, player.y, false, Color.ORANGE)
-                        else
-                            player:set("hp", player:get("hp") - data.damage)
-                            player:set("shield_cooldown", 7 * 60)
-                            misc.damage(data.damage, player.x, player.y - 10, false, Color.ORANGE)
+        
+        if player:getData().LANtimer <= 0 then
+            if #player:getData().damageTable > 0 then
+        
+                for i, data in ipairs(player:getData().damageTable) do
+                    if data.timer <= 0 then
+                        if player:get("invincible") == 0 then
+                            if player:get("shield") > 0 then
+                                player:set("shield", player:get("shield") - data.damage)
+                                player:set("shield_cooldown", 7 * 60)
+                                misc.damage(data.damage, player.x, player.y, false, Color.ORANGE)
+                            else
+                                player:set("hp", player:get("hp") - data.damage)
+                                player:set("shield_cooldown", 7 * 60)
+                                misc.damage(data.damage, player.x, player.y - 10, false, Color.ORANGE)
+                            end
                         end
+                        table.remove(player:getData().damageTable, i)
+                        --break -- Maybe stop the loop so you don't do multiple damage instances in one frame?
+                    else
+                        data.timer = data.timer - 1
                     end
-                    table.remove(player:getData().damageTable, i)
-                else
-                    data.timer = data.timer - 1
                 end
             end
 
+            player:getData().LANtimer = 60
+        else
+            player:getData().LANtimer = player:getData().LANtimer - 1
         end
     end
 end)
