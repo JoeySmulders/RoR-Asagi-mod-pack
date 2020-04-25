@@ -18,6 +18,7 @@ item:addCallback("pickup", function(player)
     end
 end)
 
+-- Revert damage done on hit and store the damage in a table with a timer
 registercallback("onHit", function(bullet, hit)
     -- If the player takes damage, delay it
     if type(hit) == "PlayerInstance" then
@@ -36,14 +37,15 @@ registercallback("onHit", function(bullet, hit)
     end
 end)
 
+-- Every second, check the damage values to see which should be applied
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
 
     if count > 0 then
         
         if player:getData().LANtimer <= 0 then
+
             if #player:getData().damageTable > 0 then
-        
                 for i, data in ipairs(player:getData().damageTable) do
                     if data.timer <= 0 then
                         if player:get("invincible") == 0 then

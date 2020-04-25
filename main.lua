@@ -37,6 +37,7 @@ if not modloader.checkFlag("TE_no_items") then
 
 	-- Use
 	require("Items/big_scythe")
+	require("Items/hell_chain")
 end
 
 -- Load Elite Type scripts
