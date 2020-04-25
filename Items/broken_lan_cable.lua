@@ -9,7 +9,14 @@ item.sprite = Sprite.load("Items/sprites/LAN_cable", 1, 12, 12)
 
 item:setTier("common")
 
-local damageTable = {} -- For the love of god replace this with a getData setup jesus fuck
+-- Initialize damage table
+item:addCallback("pickup", function(player)
+    local count = player:countItem(item) 
+    if count == 1 then
+        player:getData().damageTable = {}
+        player:getData().LANtimer = 60
+    end
+end)
 
 registercallback("onHit", function(bullet, hit)
     -- If the player takes damage, delay it
@@ -24,7 +31,7 @@ registercallback("onHit", function(bullet, hit)
 
             local timer = (1 + count) * 60 -- Stacking item increases delay by 1 second per item
 
-            damageTable[timer] = bullet:get("damage")
+            table.insert(hit:getData().damageTable, {["timer"] = timer, ["damage"] = bullet:get("damage")})
         end
     end
 end)
@@ -32,47 +39,47 @@ end)
 registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
 
-    local tempTable = {}
-
     local tableCount = 0
-    for i, value in pairs(damageTable) do
-        tableCount = tableCount + 1
-    end
 
-    -- TODO: Change it so it only checks once a second for these values instead of every fucking frame (hard to do with current table setup)
+    -- TODO: Change it so it only checks once a second for these values instead of every fucking frame
     if count > 0 then
-        if tableCount > 0 then
-            for timer, value in pairs(damageTable) do
-                if timer <= 0 then
+
+        if #player:getData().damageTable > 0 then
+    
+            for i, data in ipairs(player:getData().damageTable) do
+                if data.timer <= 0 then
                     if player:get("invincible") == 0 then
                         if player:get("shield") > 0 then
-                            player:set("shield", player:get("shield") - value)
+                            player:set("shield", player:get("shield") - data.damage)
                             player:set("shield_cooldown", 7 * 60)
-                            misc.damage(value, player.x, player.y, false, Color.ORANGE)
+                            misc.damage(data.damage, player.x, player.y, false, Color.ORANGE)
                         else
-                            player:set("hp", player:get("hp") - value)
+                            player:set("hp", player:get("hp") - data.damage)
                             player:set("shield_cooldown", 7 * 60)
-                            misc.damage(value, player.x, player.y - 10, false, Color.ORANGE)
+                            misc.damage(data.damage, player.x, player.y - 10, false, Color.ORANGE)
                         end
                     end
+                    table.remove(player:getData().damageTable, i)
                 else
-                    timer = timer - 1
-                    tempTable[timer] = value
+                    data.timer = data.timer - 1
                 end
             end
 
-            damageTable = tempTable
         end
     end
 end)
 
 -- clean up the damage table on death or game end so they don't store it into the next game or level
 registercallback("onPlayerDeath", function(player)
-    damageTable = {}
+    player:getData().damageTable = {}
 end)
 
 registercallback("onGameEnd", function()
-    damageTable = {}
+    for i, player in ipairs(misc.players) do
+        if player:getData().damageTable then
+            player:getData().damageTable = {}
+        end
+    end
 end)
 
 item:setLog{

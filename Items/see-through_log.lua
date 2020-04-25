@@ -9,6 +9,9 @@ item.sprite = Sprite.load("Items/sprites/See-through_log", 1, 12, 13)
 
 item:setTier("common")
 
+-- TODO: Make these not fucking crash the game
+
+
 -- Star Object
 local objStar = Object.new("Star")
 objStar.sprite = Sprite.load("Star", "Items/sprites/star", 1, 5, 5)
@@ -26,10 +29,18 @@ objStar:addCallback("create", function(objStar)
 	objStar.spriteSpeed = 0.25
 end)
 
+objStar:addCallback("destroy", function(objStar)
+    local objStarAc = objStar:getAccessor()
+    local parent = Object.findInstance(objStarAc.parent)
+    
+    if parent:isValid() then
+        parent:fireExplosion(objStar.x, objStar.y, (objStar.sprite.width * 3) / 19, (objStar.sprite.height * 3) / 4, objStarAc.damage, nil, nil)
+    end
+end)
+
 -- Star function called every step
 objStar:addCallback("step", function(objStar)
 	local objStarAc = objStar:getAccessor()
-	local parent = Object.findInstance(objStarAc.parent)
 
     local enemy = enemies:findNearest(objStar.x, objStar.y)
     
@@ -37,7 +48,6 @@ objStar:addCallback("step", function(objStar)
 
 	-- Destroy the Star when lifetime reaches 0
 	if objStarAc.life == 0 or (enemy and objStar:collidesWith(enemy, objStar.x, objStar.y)) then
-		parent:fireExplosion(objStar.x, objStar.y, (objStar.sprite.width * 3) / 19, (objStar.sprite.height * 3) / 4, objStarAc.damage, nil, nil)
 		objStar:destroy()
 	else
 		objStarAc.life = objStarAc.life - 1
