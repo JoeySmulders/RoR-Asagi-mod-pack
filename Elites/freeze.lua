@@ -16,7 +16,7 @@ local freezeTimer = 2 * 60
 local freezeImmune = 5 * 60
 
 -- TODO: turn the freeze into a debuff instead of hardcoded
--- TODO: have an actual sprite or palette for the Freezing magma worm instead of just adding a color
+-- TODO: have an actual sprite for the Freezing magma worm instead of just adding a color
 
 -- Adding a new elite type for magma worm seems to enable the rest of the original elites for them too, disable them
 for i, eliteType in ipairs(originalElites) do
@@ -57,12 +57,11 @@ registercallback("onPlayerStep", function(player)
     end
 
     --TODO: Fix bug where getting frozen while on rope requires you to jump after being unfrozen (game still thinks you are climbing)
-    --TODO: Make it so frozen drops you until the "free" variable, not when collides with map
     -- Freezes the player, making them drop to the floor and stuck in the idle animation for x amount of seconds
     if player:getData().frozen == 1 then
         player:set("disable_ai", 1)
 
-        if not player:collidesMap(player.x, player.y + 5) then
+        if player:get("free") == 1 then
             player.y = player.y + 5
         end
 

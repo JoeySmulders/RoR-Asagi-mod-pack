@@ -2,8 +2,8 @@
 ------ spiter.lua
 ---- Adds a new artifact which makes more spite balls appear
 
--- Creates a new artifact with the name Artifact of Spiteful
-local artifact = Artifact.new("Spiteful")
+-- Creates a new artifact with the name Artifact of Revenge
+local artifact = Artifact.new("Revenge")
 -- Make the artifact be unlocked by default
 artifact.unlocked = true
 
