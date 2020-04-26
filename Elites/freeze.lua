@@ -57,7 +57,7 @@ registercallback("onPlayerStep", function(player)
     end
 
     --TODO: Fix bug where getting frozen while on rope requires you to jump after being unfrozen (game still thinks you are climbing)
-
+    --TODO: Make it so frozen drops you until the "free" variable, not when collides with map
     -- Freezes the player, making them drop to the floor and stuck in the idle animation for x amount of seconds
     if player:getData().frozen == 1 then
         player:set("disable_ai", 1)

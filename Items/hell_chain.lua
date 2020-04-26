@@ -1,10 +1,10 @@
 -- hell_chain.lua
 -- Use item that links enemies together
 
-local item = Item("Bloody Chains")
+local item = Item("Bloody Cross")
 
 item.pickupText = "Link all enemies, making them share damage taken by half"
-item.sprite = Sprite.load("Items/sprites/hell_chain", 1, 13, 13)
+item.sprite = Sprite.load("Items/sprites/hell_chain", 1, 14, 14)
 item:setTier("use")
 item.isUseItem = true
 item.useCooldown = 20
@@ -16,10 +16,13 @@ linked.sprite = Sprite.load("Items/sprites/linked", 1, 1, 1)
 
 local currentEnemies = {}
 
+local wormBody = Object.find("WormBody", "Vanilla")
+
 -- Apply debuff to all existing enemies (TODO: Make it only on the current screen)
 item:addCallback("use", function(player, embryo)
+    currentEnemies = {}
     currentEnemies = enemies:findAll()
-
+    
     if #currentEnemies > 0 then
         for i, enemy in ipairs(currentEnemies) do
             if embryo then
@@ -35,7 +38,7 @@ end)
 registercallback("preHit", function(bullet, hit)
     if hit:hasBuff(linked) then
         for i, enemy in ipairs(currentEnemies) do 
-            if enemy ~= hit and enemy:isValid() then
+            if enemy ~= hit and enemy:isValid() and enemy:hasBuff(linked) then
 
                 local damage = 0
                 -- deal full damage if embryo procced
@@ -55,7 +58,7 @@ end)
 -- Remove enemies from the table when the debuff ends
 linked:addCallback("end", function(actor)
     for i, enemy in ipairs(currentEnemies) do 
-        if actor == enemy then
+        if actor == enemy or actor:isValid() == false then
             table.remove(currentEnemies, i)
         end
     end
@@ -67,9 +70,13 @@ registercallback("onDraw", function()
         graphics.alpha(0.1)
         graphics.color(Color.BLACK)
         for i, enemy1 in ipairs(currentEnemies) do 
-            for i, enemy2 in ipairs(currentEnemies) do
-                if enemy1 ~= enemy2 and enemy1:isValid() and enemy2:isValid() then
-                    graphics.line(enemy1.x, enemy1.y, enemy2.x, enemy2.y, 3)
+            if enemy1:isValid() and enemy1:getObject() ~= wormBody then
+                for i, enemy2 in ipairs(currentEnemies) do
+                    if enemy2:isValid() and enemy2:getObject() ~= wormBody then
+                        if enemy1 ~= enemy2 then
+                            graphics.line(enemy1.x, enemy1.y, enemy2.x, enemy2.y, 3)
+                        end
+                    end
                 end
             end
         end
