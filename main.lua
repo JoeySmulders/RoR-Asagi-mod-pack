@@ -58,6 +58,10 @@ if not modloader.checkFlag("TE_no_gameplay") then
 	require("gameplay")
 end
 
+if not modloader.checkFlag("TE_no_crateQoL") then
+	require("crate")
+end
+
 -- Starstorm stuff
 if modloader.checkMod("StarStorm") then
 	require("rules")
@@ -105,6 +109,7 @@ callback.register("globalRoomStart", function(room)
 end)
 
 
+-- function stuff
 function distance ( x1, y1, x2, y2 )
 	local dx = x1 - x2
 	local dy = y1 - y2
