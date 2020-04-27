@@ -34,6 +34,7 @@ if not modloader.checkFlag("TE_no_items") then
 	require("Items/punching_bag")
 	require("Items/uranium_bullets")
 	require("Items/super_stickies")
+	require("Items/cursed_longsword")
 
 	-- Use
 	require("Items/big_scythe")
@@ -102,3 +103,14 @@ callback.register("globalRoomStart", function(room)
 
 	graphics.bindDepth(-99, drawName)
 end)
+
+
+function distance ( x1, y1, x2, y2 )
+	local dx = x1 - x2
+	local dy = y1 - y2
+	return math.sqrt ( dx * dx + dy * dy )
+end
+
+function angleDif(current, target)
+    return ((((current - target) % 360) + 540) % 360) - 180
+end

@@ -24,15 +24,18 @@ registercallback("onHit", function(bullet, hit)
     if type(hit) == "PlayerInstance" then
         local count = hit:countItem(item)
         if count > 0 then
+            -- Apply armor reduction
+            local realDamage = bullet:get("damage") * (1 - (hit:get("armor") / (hit:get("armor") + 100)))
+
             if hit:get("shield") > 0 then
-                hit:set("shield", hit:get("shield") + bullet:get("damage"))
+                hit:set("shield", hit:get("shield") + realDamage)
             else
-                hit:set("hp", hit:get("hp") + bullet:get("damage"))
+                hit:set("hp", hit:get("hp") + realDamage)
             end
 
             local timer = (1 + count) -- Stacking item increases delay by 1 second per item
 
-            table.insert(hit:getData().damageTable, {["timer"] = timer, ["damage"] = bullet:get("damage")})
+            table.insert(hit:getData().damageTable, {["timer"] = timer, ["damage"] = realDamage})
         end
     end
 end)

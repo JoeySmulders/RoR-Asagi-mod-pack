@@ -12,7 +12,7 @@ item.useCooldown = 20
 ItemPool.find("enigma", "vanilla"):add(item)
 
 linked = Buff.new("Linked")
-linked.sprite = Sprite.load("Items/sprites/linked", 1, 1, 1)
+linked.sprite = Sprite.load("Items/sprites/linked", 1, 4, 5)
 
 local currentEnemies = {}
 
@@ -29,6 +29,7 @@ item:addCallback("use", function(player, embryo)
                 enemy:getData().linkedEmbryo = true
             end
             enemy:applyBuff(linked, 10 * 60)
+            enemy:getData().linkLine = false
         end
     end
 
@@ -64,7 +65,9 @@ linked:addCallback("end", function(actor)
     end
 end)
 
--- Draw lines between all enemies with the debuff
+-- TODO: Instead of manually checking who to draw from, change the use callback to bouhnce from nearby enemy to nearby enemy instead so the the work only has to be calculated once
+
+-- Draw lines between enemies with the debuff, but don't draw from the same enemy twice to avoid filling the entire screen with lines
 registercallback("onDraw", function()
     if #currentEnemies > 0 then
         graphics.alpha(0.1)
@@ -73,14 +76,29 @@ registercallback("onDraw", function()
             if enemy1:isValid() and enemy1:getObject() ~= wormBody then
                 for i, enemy2 in ipairs(currentEnemies) do
                     if enemy2:isValid() and enemy2:getObject() ~= wormBody then
-                        if enemy1 ~= enemy2 then
+                        if enemy1 ~= enemy2 and (enemy1:getData().linkLine == false and enemy2:getData().linkLine == false) then
+                            graphics.line(enemy1.x, enemy1.y, enemy2.x, enemy2.y, 2)
                             graphics.line(enemy1.x, enemy1.y, enemy2.x, enemy2.y, 3)
+                            enemy1:getData().linkLine = true
                         end
                     end
                 end
             end
         end
 
+    end
+end)
+
+-- Reset the linkLines after drawing
+registercallback("postStep", function()
+    if #currentEnemies > 0 then
+        for i, enemy in ipairs(currentEnemies) do 
+            if enemy:isValid() == false then
+                table.remove(currentEnemies, i)
+            else
+                enemy:getData().linkLine = false
+            end
+        end
     end
 end)
 

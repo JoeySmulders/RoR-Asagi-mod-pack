@@ -49,12 +49,14 @@ objStar:addCallback("step", function(objStar)
         objStar:destroy()
     end
 
-    if objStarAc.life == 0 then
-        objStar:getData().explode = false
-		objStar:destroy()
-	else
-		objStarAc.life = objStarAc.life - 1
-	end
+    if objStar:isValid() then
+        if objStarAc.life == 0 then
+            objStar:getData().explode = false
+            objStar:destroy()
+	    else
+            objStarAc.life = objStarAc.life - 1
+        end
+    end
 
 end)
 

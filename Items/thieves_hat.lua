@@ -16,6 +16,7 @@ item:addCallback("pickup", function(player)
     if count == 1 then
         player:set("feather", player:get("feather") + 1)
         player:set("bamboo_boost", 0)
+        player:getData().hatRopeTimer = 0
     end
 end)
 
@@ -68,13 +69,18 @@ registercallback("onPlayerStep", function(player)
     if count > 0 then
 
         -- TODO: Make the item work with controller? (use the moveLeft and moveRight variables)
-        -- TODO: Figure out how to actually make ropes stop acting weird when you have this item (probably add a timer that disables the boost jump while on a rope)
         if player:get("activity") == 30 then
             player:set("bamboo_boost", 0)
+            player:getData().hatRopeTimer = 5
         else
+            -- Timer used to disable the boost jump when jumping off ropes for a few frames
+            if player:getData().hatRopeTimer > 0 then
+                player:getData().hatRopeTimer = player:getData().hatRopeTimer - 1
+            end
+
             -- When you jump in midair while having a jump available and are holding either left or right you get the boost jump
             if player:control("jump") == input.PRESSED and player:get("free") == 1 and player:get("jump_count") < player:get("feather") 
-            and (player:control("left") == input.HELD or player:control("right") == input.HELD) then
+            and (player:control("left") == input.HELD or player:control("right") == input.HELD) and player:getData().hatRopeTimer <= 0 then
                 local xOffset = 0
                 if player:getFacingDirection() == 0 then
                     player:set("bamboo_boost", 1)
