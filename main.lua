@@ -21,6 +21,7 @@ if not modloader.checkFlag("TE_no_items") then
 	require("Items/soul_devourer")
 	require("Items/blood_economy")
 	require("Items/thieves_hat")
+	require("Items/party_shroom")
 
 	-- Rare
 	require("Items/punching_bag")
