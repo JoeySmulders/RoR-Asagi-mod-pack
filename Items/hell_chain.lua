@@ -18,13 +18,14 @@ local currentEnemies = {}
 
 local wormBody = Object.find("WormBody", "Vanilla")
 
--- Apply debuff to all existing enemies (TODO: Make it only on the current screen)
+-- Apply debuff to all existing enemies
 item:addCallback("use", function(player, embryo)
     currentEnemies = {}
     currentEnemies = enemies:findAll()
     
+    -- Don't link friendly enemies or if they are too far away
     for i, enemy in ipairs(currentEnemies) do
-        if enemy:get("team") == player:get("team") then
+        if enemy:get("team") == player:get("team") or distance(player.x, player.y, enemy.x, enemy.y) > 500 then
             table.remove(currentEnemies, i)
         end
     end
