@@ -7,7 +7,8 @@ local teleportEnabled = true
 local foundTeleporter
 local playerObject = ParentObject.find("P", "Vanilla")
 local currentPlayer
-
+local crateInstance = Object.find("Artifact8Box3")
+local whiteFlash = Object.find("WhiteFlash")
 
 -- Starstorm rules
 registercallback("postSelection", function()
@@ -22,8 +23,16 @@ registercallback("onStageEntry", function()
 end)
 
 local function getTeleporterPoints()
-    local newPoints = misc.director:get("points") + 1000 + (misc.director:get("stages_passed") * 500) + (#misc.players * 100)
+    local newPoints = misc.director:get("points") + 1000 + (misc.director:get("stages_passed") * 500) + (#misc.players * 100) -- Change this so it also scales with difficulty and more with players
     return newPoints
+end
+
+-- Flash the screen
+local function Flash(color)
+	local flash = whiteFlash:create(0, 0)
+	flash.blendColor = color
+	flash.alpha = 0.8
+	flash:set("rate", 0.01)
 end
 
 -- Sync teleporter challenge
@@ -32,12 +41,24 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
 
     if teleporter then
         if net.host and teleporter:getData().activated == false then
-            local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+            if teleporter:get("isBig") then
+                ExtraDifficulty.set(ExtraDifficulty.get() + 1)
+                crateInstance:create(teleporter.x, teleporter.y)
+                Flash(Color.RED)
+            else
+                local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                Flash(Color.BLACK)
+            end    
             misc.director:set("spawn_boss", 1)
-            misc.director:set("points", getTeleporterPoints()) -- Change this so it also scales with difficulty 
+            misc.director:set("points", getTeleporterPoints()) 
             teleporter:getData().activated = true
             teleporterPacket:sendAsHost(net.ALL, nil, netTeleporter)
         else
+            if teleporter:get("isBig") then
+                Flash(Color.RED)
+            else
+                Flash(Color.BLACK)
+            end
             teleporter:getData().activated = true
             teleporter:getData().inTeleporter = false
         end
@@ -73,7 +94,14 @@ registercallback("onStep", function()
                             if not net.online or net.localPlayer == player then
                                 local netTeleporter = teleporter:getNetIdentity()
                                 if net.host then
-                                    local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                                    if teleporter:get("isBig") then
+                                        ExtraDifficulty.set(ExtraDifficulty.get() + 1)
+                                        crateInstance:create(teleporter.x, teleporter.y)
+                                        Flash(Color.RED)
+                                    else
+                                        local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                                        Flash(Color.BLACK)
+                                    end                            
                                     misc.director:set("spawn_boss", 1)
                                     misc.director:set("points", getTeleporterPoints()) -- Change this so it also scales with difficulty 
                                     teleporter:getData().activated = true
@@ -94,7 +122,11 @@ end)
 registercallback("onDraw", function()
     for i, teleporter in pairs(teleporters:findAll()) do
         if teleporter:getData().inTeleporter == true and teleporter:getData().activated == false then
-            graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to challenge the odds.&!&", teleporter.x - 80, teleporter.y - 80, graphics.FONT_DEFAULT)
+            if teleporter:get("isBig") == 1 then
+                graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to die.&!&", teleporter.x - 40, teleporter.y - 80, graphics.FONT_DEFAULT)
+            else
+                graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to challenge the odds.&!&", teleporter.x - 80, teleporter.y - 80, graphics.FONT_DEFAULT)
+            end
         end
     end
 end)

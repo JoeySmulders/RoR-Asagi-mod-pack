@@ -84,7 +84,7 @@ registercallback("onStep", function()
 
                             -- Save the selection for the item you are hovering over when backing out
                             if modloader.checkMod("StarStorm") then
-                                SSCrate.setSelection(player, crate, crate:get("selection"))
+                                SSCrate.setSelection(data.player, crate, crate:get("selection"))
                             end
 
                             local oldPositionX = crate.x 
