@@ -15,6 +15,7 @@ objSword.sprite = Sprite.load("LongSword", "Items/sprites/longsword", 1, 6, 12)
 objSword.depth = 1
 local rotationSpeed = -0.075
 local movementSpeed = 3
+local attackSpeed = 10
 
 -- Sword creation and variables
 objSword:addCallback("create", function(objSword)
@@ -138,7 +139,7 @@ objSword:addCallback("step", function(objSword)
                         player:fireExplosion(objSword.x, objSword.y, (objSword.sprite.width) / 19, (objSword.sprite.height) / 4, objSwordAc.damage, nil, nil, DAMAGER_NO_PROC)
                     end
                     
-                    objSword:getData().explosionTimer = 3
+                    objSword:getData().explosionTimer = attackSpeed
                 else
                     objSword:getData().explosionTimer = objSword:getData().explosionTimer - 1
                 end

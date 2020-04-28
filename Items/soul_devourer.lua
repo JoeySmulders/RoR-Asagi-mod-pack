@@ -20,6 +20,14 @@ item:addCallback("pickup", function(player)
 
 end)
 
+-- Reset damage when item is removed
+callback.register("onItemRemoval", function(player, itemCheck, amount)
+	if itemCheck == item then
+        player:set("damage", player:get("damage") - player:get("soul-devourer_counter"))
+        player:set("soul-devourer_counter", 0)
+	end
+end)
+
 -- Double the soul counter if you pick up force relic so it doesn't give you permanent free damage
 if modloader.checkMod("StarStorm") then
     local force = Item.find("Relic of Force")

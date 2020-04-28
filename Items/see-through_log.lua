@@ -22,7 +22,7 @@ objStar:addCallback("create", function(objStar)
 	objStarAc.life = 4 * 60
 	objStarAc.speed = 2
 	objStarAc.size = 1
-	objStarAc.damage = 0.5
+	objStarAc.damage = 0.3
 	objStar.spriteSpeed = 0.25
 end)
 
@@ -91,7 +91,7 @@ end)
 
 item:setLog{
     group = "common",
-    description = "Shoot out 8 ninja stars around you every 10 seconds for 50% damage",
+    description = "Shoot out 8 ninja stars around you every 10 seconds for 30% damage",
     story = "",
     destination = "",
     date = ""

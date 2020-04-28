@@ -3,7 +3,7 @@
 
 local item = Item("Uranium Bullets")
 
-item.pickupText = "Deal 0.5% of enemy max hp per hit"
+item.pickupText = "Deal an extra 0.25% of enemy max hp per hit"
 
 item.sprite = Sprite.load("Items/sprites/uranium_bullets", 1, 12, 13)
 
@@ -20,7 +20,7 @@ registercallback("preHit", function(bullet, hit)
             local enemyHealth = hit:get("maxhp")
 
             --local extraDamage = (damageMultiplier / (110 - math.clamp(count * 10, 10, 60))) * enemyHealth
-            local extraDamage = enemyHealth * math.clamp(count * 0.005, 0.005, 0.015)
+            local extraDamage = enemyHealth * math.clamp(count * 0.0025, 0.0025, 0.01)
 
             --log(bullet:get("damage"), "original damage")
 
@@ -36,7 +36,7 @@ end)
 
 item:setLog{
     group = "rare",
-    description = "Deal extra damage on each attack for 0.5% of enemy max hp",
+    description = "Deal extra damage on each attack for 0.25% of enemy max hp",
     story = "",
     destination = "",
     date = ""

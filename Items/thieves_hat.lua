@@ -44,10 +44,24 @@ thievesHatSync = net.Packet("Thieves Hat Sync", function(player, playerHSpeed, p
     end
 end)
 
-function boostJump(player, horizontalMovement, controlSide)
+function boostJump(player, horizontalMovement, controlSide, playerAc)
     player:set("activity_type", 3)
     player:set("pHspeed", player:get("pHmax") * horizontalMovement)
-    if player:control(controlSide) == input.NEUTRAL then
+
+    local cancel = false
+    if controlSide == "right" then
+        if playerAc.moveLeft == 1 or playerAc.moveRight == 0 then
+            cancel = true
+        end
+    end
+
+    if controlSide == "left" then
+        if playerAc.moveRight == 1 or playerAc.moveLeft == 0 then
+            cancel = true
+        end
+    end
+
+    if cancel then
         player:set("activity_type", 0)
         player:set("bamboo_boost", 0)
         player:getData().changedBoostDirection = true
@@ -78,9 +92,12 @@ registercallback("onPlayerStep", function(player)
                 player:getData().hatRopeTimer = player:getData().hatRopeTimer - 1
             end
 
+            local playerAc = player:getAccessor()
             -- When you jump in midair while having a jump available and are holding either left or right you get the boost jump
+            --if player:control("jump") == input.PRESSED and player:get("free") == 1 and player:get("jump_count") < player:get("feather") 
+            --and (player:control("left") == input.HELD or player:control("right") == input.HELD) and player:getData().hatRopeTimer <= 0 then
             if player:control("jump") == input.PRESSED and player:get("free") == 1 and player:get("jump_count") < player:get("feather") 
-            and (player:control("left") == input.HELD or player:control("right") == input.HELD) and player:getData().hatRopeTimer <= 0 then
+            and (playerAc.moveLeft == 1 or playerAc.moveRight == 1) and player:getData().hatRopeTimer <= 0 then
                 local xOffset = 0
                 if player:getFacingDirection() == 0 then
                     player:set("bamboo_boost", 1)
@@ -107,12 +124,12 @@ registercallback("onPlayerStep", function(player)
 
             -- If jumping to the right
             if player:get("bamboo_boost") == 1 and (player:get("activity_type") == 3 or player:get("activity_type") == 0) then
-                boostJump(player, 1.5 + (0.5 * count), "right")
+                boostJump(player, 1.5 + (0.5 * count), "right", playerAc)
             end
 
             -- If jumping to the left
             if player:get("bamboo_boost") == 2 and (player:get("activity_type") == 3 or player:get("activity_type") == 0) then
-                boostJump(player, -1.5 - (0.5 * count), "left")
+                boostJump(player, -1.5 - (0.5 * count), "left", playerAc)
             end
 
             -- Disable boost when you hit the floor

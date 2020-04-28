@@ -39,7 +39,7 @@ end
 teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, netTeleporter)
     local teleporter = netTeleporter:resolve()
 
-    if teleporter then
+    if teleporter:isValid() then
         if net.host and teleporter:getData().activated == false then
             if teleporter:get("isBig") then
                 ExtraDifficulty.set(ExtraDifficulty.get() + 1)

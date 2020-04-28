@@ -21,7 +21,7 @@ end)
 crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, crateType, crateX, crateY)
 
     local crate = crateNet:resolve()
-    if crate then
+    if crate:isValid() then
         crate:set("active", 0)
         crate:delete()
     end
@@ -32,6 +32,16 @@ crateNetBackout = net.Packet("Crate Backout Sync", function(player, crateNet, cr
     if net.host then
         local newCrate = crateType:create(crateX, crateY)
         crateNetBackout:sendAsHost(net.EXCLUDE, player, crateNet, crateType, crateX, crateY)
+    end
+end)
+
+-- Make sure the game knows they aren't still browsing the crate? Just to make sure it doesn't desync
+crateExtraSync = net.Packet("Crate Extra Sync", function(player)
+    player:set("activity", 0)
+    player:set("activity_type", 0)
+
+    if net.host then
+        crateExtraSync:sendAsHost(net.EXCLUDE, player)
     end
 end)
 
@@ -107,8 +117,17 @@ registercallback("onStep", function()
 
                         end
                     end
+
                     data.player:getData().crateActive = false
                     activeCrates[key] = nil  
+
+                    -- Safety measure?
+                    if net.host then
+                        crateExtraSync:sendAsHost(net.ALL, nil)
+                    else
+                        crateExtraSync:sendAsClient()
+                    end
+
                 else
                     if data.player:get("activity") ~= 95 then
                         data.player:getData().crateActive = false
