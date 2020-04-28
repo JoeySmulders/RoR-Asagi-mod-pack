@@ -4,7 +4,7 @@ local sprFrozen = Sprite.load("FreezeFrozen", "Elites/Sprites/Frozen", 1, 7, 8)
 elite.Freezing = EliteType.new("Freezing")
 elite.Freezing.displayName = "Freezing"
 elite.Freezing.color = Color.fromHex(0x0000FF)
-elite.Freezing.palette = sprFreezePal -- Elite Palettes don't work for magma worms, maybe assign one to the monster card?
+elite.Freezing.palette = sprFreezePal -- Elite Palettes don't work for magma worms, maybe make a unique sprite?
 
 local magmaWorm = MonsterCard.find("Magma Worm", "Vanilla") 
 local wormHead = Object.find("WormHead", "Vanilla")
@@ -15,6 +15,7 @@ magmaWorm.eliteTypes:add(elite.Freezing)
 local freezeTimer = 2 * 60
 local freezeImmune = 5 * 60
 
+-- TODO: Check out why this is crashing some people
 -- TODO: turn the freeze into a debuff instead of hardcoded
 -- TODO: have an actual sprite for the Freezing magma worm instead of just adding a color
 

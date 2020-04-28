@@ -82,6 +82,11 @@ registercallback("onStep", function()
                     for i, crate in ipairs(crates:findMatchingOp("active", ">=", 1)) do
                         if Object.findInstance(crate:get("owner")) == data.player then
 
+                            -- Save the selection for the item you are hovering over when backing out
+                            if modloader.checkMod("StarStorm") then
+                                SSCrate.setSelection(player, crate, crate:get("selection"))
+                            end
+
                             local oldPositionX = crate.x 
                             local oldPositionY = crate.y
                             

@@ -23,6 +23,12 @@ item:addCallback("use", function(player, embryo)
     currentEnemies = {}
     currentEnemies = enemies:findAll()
     
+    for i, enemy in ipairs(currentEnemies) do
+        if enemy:get("team") == player:get("team") then
+            table.remove(currentEnemies, i)
+        end
+    end
+
     if #currentEnemies > 0 then
         for i, enemy in ipairs(currentEnemies) do
             if embryo then

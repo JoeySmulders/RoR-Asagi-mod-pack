@@ -84,7 +84,7 @@ objSword:addCallback("step", function(objSword)
         if objSword:getData().target:isValid() == false or objSword:getData().target == player then
             local enemy = enemies:findNearest(player.x, player.y)
 
-            if enemy and player:get("dead") == 0 then
+            if enemy and enemy:get("team") ~= player:get("team") and player:get("dead") == 0 then
                 local netTarget
                 if distance(player.x, player.y, enemy.x, enemy.y) < 250 then
                     objSword:getData().target = enemy

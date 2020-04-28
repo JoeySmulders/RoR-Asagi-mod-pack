@@ -3,7 +3,7 @@
 
 local item = Item("Soul Taker")
 
-item.pickupText = "Hitting an enemy increases damage by 1, damage is lost when you take damage"
+item.pickupText = "Hitting an enemy increases damage by 1 (up to 100), damage is lost when you take damage"
 
 item.sprite = Sprite.load("Items/sprites/Soul_devourer", 1, 12, 11)
 local sprMeter = Sprite.load("Items/sprites/soul_meter", 14, 7, 2)
@@ -40,8 +40,10 @@ registercallback("onHit", function(bullet, hit)
     if type(parent) == "PlayerInstance" then
         local count = parent:countItem(item)
         if count > 0 then
-            parent:set("soul-devourer_counter", parent:get("soul-devourer_counter") + count)
-            parent:set("damage", parent:get("damage") + count)
+            if parent:get("soul-devourer_counter") < 90 + (count * 10) then -- Cap the damage to 100
+                parent:set("soul-devourer_counter", parent:get("soul-devourer_counter") + count)
+                parent:set("damage", parent:get("damage") + count)
+            end
         end
     end
     -- If the player takes damage, remove damage gained by item
@@ -57,7 +59,7 @@ end)
 registercallback("onPlayerDraw", function(player)
     local count = player:countItem(item)
     if count > 0 then
-        local meterValue = (player:get("soul-devourer_counter") / 10) + 1
+        local meterValue = (player:get("soul-devourer_counter") / 8) + 1 -- Test this
         graphics.drawImage{
             image = sprMeter, 
             x = player.x, 
@@ -69,7 +71,7 @@ end)
 
 item:setLog{
     group = "uncommon",
-    description = "Hitting an enemy increases damage by 1, but the damage is lost when you take damage",
+    description = "Hitting an enemy increases damage by 1 up to a total of 100, but the damage is lost when you take damage",
     story = "",
     destination = "",
     date = ""

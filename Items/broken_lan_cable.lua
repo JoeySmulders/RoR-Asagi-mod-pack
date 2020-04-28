@@ -3,7 +3,7 @@
 
 local item = Item("Broken LAN cable")
 
-item.pickupText = "Delay damage taken by 2 seconds"
+item.pickupText = "Delay damage taken by 1 seconds and reduce it by 10%"
 
 item.sprite = Sprite.load("Items/sprites/LAN_cable", 1, 12, 12)
 
@@ -24,6 +24,8 @@ registercallback("onHit", function(bullet, hit)
     if type(hit) == "PlayerInstance" then
         local count = hit:countItem(item)
         if count > 0 then
+            count = math.clamp(count, 1, 6)
+            
             -- Apply armor reduction
             local realDamage = bullet:get("damage") * (1 - (hit:get("armor") / (hit:get("armor") + 100)))
 
@@ -33,7 +35,8 @@ registercallback("onHit", function(bullet, hit)
                 hit:set("hp", hit:get("hp") + realDamage)
             end
 
-            local timer = (1 + count) -- Stacking item increases delay by 1 second per item
+            local timer = count -- Stacking item increases delay by 1 second per item
+            local reducedDamage = realDamage * (0.9 - (0.02 * (count - 1))) -- Reduce the damage before storing it
 
             table.insert(hit:getData().damageTable, {["timer"] = timer, ["damage"] = realDamage})
         end
@@ -92,7 +95,7 @@ end)
 
 item:setLog{
     group = "common",
-    description = "Delay damage taken by 2 seconds",
+    description = "Delay damage taken by 1 seconds and reduce it by 10%",
     story = "",
     destination = "",
     date = ""
