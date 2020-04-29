@@ -14,7 +14,7 @@ local objKnive = Object.new("Knive")
 objKnive.sprite = Sprite.load("Knive", "Items/sprites/knive", 1, 3, 8)
 objKnive.depth = -99
 local movementSpeed = 8
-local rotationSpeed = -0.1
+local rotationSpeed = -0.2
 
 -- Star creation and variables
 objKnive:addCallback("create", function(objKnive)
@@ -22,7 +22,7 @@ objKnive:addCallback("create", function(objKnive)
 	objKniveAc.life = 10 * 60
 	objKniveAc.speed = 0
 	objKniveAc.size = 1
-	objKniveAc.damage = 0.1
+	objKniveAc.damage = 0.25
     objKnive.spriteSpeed = 0.25
 end)
 
@@ -102,18 +102,19 @@ registercallback("preHit", function(bullet, hit)
             count = player:countItem(item)
 
             if count > 0 then
-                if math.chance(15 + (count * 10)) then
+                if math.chance(25) then -- TODO: SYNC THIS
                     local knive = objKnive:create(player.x, player.y)
                     knive:set("parent", player.id)
                     knive:getData().initialTimer = 10
 
                     if hit:getData().kniveMark == nil then
-                        hit:getData().kniveMark = count + 9
+                        hit:getData().kniveMark = count + 3
                     end
 
                     knive:getData().target = hit
 
-                    if math.chance(50) then
+                    -- This doesn't need to be synced?
+                    if math.chance(50) then 
                         knive.angle = 180
                     else
                         knive.angle = 0
@@ -128,7 +129,7 @@ end)
 
 item:setLog{
     group = "uncommon",
-    description = "25% on hit to launch a blade at the hit enemy. The blade deals 100% + 10% for each prior blade that hit the target",
+    description = "25% on hit to launch a blade at the hit enemy. The blade deals 100% + 25% for each prior blade that hit the target",
     story = "",
     destination = "",
     date = ""

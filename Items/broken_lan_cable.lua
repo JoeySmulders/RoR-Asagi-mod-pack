@@ -80,9 +80,17 @@ registercallback("onPlayerStep", function(player)
     end
 end)
 
--- clean up the damage table on death or game end so they don't store it into the next game or level
+-- clean up the damage table on death, stage entry and game end
 registercallback("onPlayerDeath", function(player)
     player:getData().damageTable = {}
+end)
+
+registercallback("onStageEntry", function()
+    for i, player in ipairs(misc.players) do
+        if player:getData().damageTable then
+            player:getData().damageTable = {}
+        end
+    end
 end)
 
 registercallback("onGameEnd", function()

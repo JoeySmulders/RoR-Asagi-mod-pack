@@ -23,7 +23,7 @@ objSword:addCallback("create", function(objSword)
 	objSwordAc.life = 0
 	objSwordAc.speed = 0
 	objSwordAc.size = 1
-	objSwordAc.damage = 0.3
+	objSwordAc.damage = 0.5
     objSword.spriteSpeed = 0.25
     objSword.angle = 180
     objSword:getData().explosionTimer = 0
@@ -80,7 +80,7 @@ objSword:addCallback("step", function(objSword)
 
     if player then
         local count = player:countItem(item) 
-        objSwordAc.damage = 0.10 + (count * 0.20)
+        objSwordAc.damage = 0.25 + (count * 0.25)
 
         if objSword:getData().target:isValid() == false or objSword:getData().target == player then
             local enemy = enemies:findNearest(player.x, player.y)
