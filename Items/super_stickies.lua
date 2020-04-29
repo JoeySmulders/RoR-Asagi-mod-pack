@@ -19,17 +19,25 @@ superStickies = net.Packet("Super Sticky Packet", function(player, xPosition, yP
 end)
 
 registercallback("onHit", function(bullet, hit)
-    if bullet:getData().noSticky ~= true then
-        local player = bullet:getParent()
-        if type(player) == "PlayerInstance" then
-            local count = player:countItem(item)
+    local has_no_proc = false
 
-            if count > 0 then
-                if math.chance(5) then
-                -- can't use a loop because of how the game treats stickies (applying multiple in the same frame will only deal damage once)
-                    player:getData().repeatStickies = 1 + (count * 2)
-                    player:getData().stickyPositionX = hit.x
-                    player:getData().stickyPositionY = hit.y
+    if bullet:get("bullet_properties") then
+        has_no_proc = bit.band(bullet:get("bullet_properties"), DAMAGER_NO_PROC) ~= 0
+    end
+    
+    if not has_no_proc then
+        if bullet:getData().noSticky ~= true then
+            local player = bullet:getParent()
+            if type(player) == "PlayerInstance" then
+                local count = player:countItem(item)
+
+                if count > 0 then
+                    if math.chance(5) then
+                    -- can't use a loop because of how the game treats stickies (applying multiple in the same frame will only deal damage once)
+                        player:getData().repeatStickies = 1 + (count * 2)
+                        player:getData().stickyPositionX = hit.x
+                        player:getData().stickyPositionY = hit.y
+                    end
                 end
             end
         end

@@ -5,7 +5,7 @@ local item = Item("Party Shroom")
 
 item.pickupText = "Heal 5 hp per second to self and nearby allies"
 
-item.sprite = Sprite.load("Items/sprites/mushroom", 1, 12, 13)
+item.sprite = Sprite.load("Items/sprites/mushroom", 1, 13, 13)
 
 item:setTier("uncommon")
 

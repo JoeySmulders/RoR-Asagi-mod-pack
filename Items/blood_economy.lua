@@ -44,24 +44,24 @@ end)
 
 
 registercallback("preHit", function(bullet, hit)
-    local player = bullet:getParent()
-    local count = 0
+local player = bullet:getParent()
+local count = 0
 
-        if type(player) == "PlayerInstance" then
-            count = player:countItem(item)
+    if type(player) == "PlayerInstance" then
+        count = player:countItem(item)
+
+        if count > 0 then
+            createGold(player, bullet, hit, count)
+        end
+    else 
+        if type(hit) == "PlayerInstance" then
+            count = hit:countItem(item)
 
             if count > 0 then
-                createGold(player, bullet, hit, count)
-            end
-        else 
-            if type(hit) == "PlayerInstance" then
-                count = hit:countItem(item)
-
-                if count > 0 then
-                    createGold(hit, bullet, hit, count)
-                end
+                createGold(hit, bullet, hit, count)
             end
         end
+    end
 end)
 
 function createGold (player, bullet, hit, count)

@@ -11,13 +11,21 @@ item:setTier("common")
 
 -- If player is in the air when an attack hits, deal increased damage
 registercallback("onFire", function(bullet)
-    local parent = bullet:getParent()
+    local has_no_proc = false
 
-    if type(parent) == "PlayerInstance" then
-        local count = parent:countItem(item)
-        if count > 0 and parent:get("free") == 1 and parent:get("activity") ~= 30 then
-            bullet:set("damage", bullet:get("damage") * (1.2 + (count * 0.075) - 0.075))
-            bullet:set("damage_fake", bullet:get("damage_fake") * (1.2 + (count * 0.075) - 0.075)) -- Fake Damage variation
+    if bullet:get("bullet_properties") then
+        has_no_proc = bit.band(bullet:get("bullet_properties"), DAMAGER_NO_PROC) ~= 0
+    end
+    
+    if not has_no_proc then
+        local parent = bullet:getParent()
+
+        if type(parent) == "PlayerInstance" then
+            local count = parent:countItem(item)
+            if count > 0 and parent:get("free") == 1 and parent:get("activity") ~= 30 then
+                bullet:set("damage", bullet:get("damage") * (1.2 + (count * 0.075) - 0.075))
+                bullet:set("damage_fake", bullet:get("damage_fake") * (1.2 + (count * 0.075) - 0.075)) -- Fake Damage variation
+            end
         end
     end
 end)

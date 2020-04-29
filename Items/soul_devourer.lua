@@ -41,22 +41,30 @@ if modloader.checkMod("StarStorm") then
     end)
 end
 
-
+-- TODO make the cap actually a proper cap
 registercallback("onHit", function(bullet, hit)
-    local parent = bullet:getParent()
-    -- If player hits an enemy, increase their damage stat by 1
-    if type(parent) == "PlayerInstance" then
-        local count = parent:countItem(item)
-        if count > 0 then
-            if parent:get("soul-devourer_counter") < 90 + (count * 10) then -- Cap the damage to 100
-                parent:set("soul-devourer_counter", parent:get("soul-devourer_counter") + count)
-                parent:set("damage", parent:get("damage") + count)
+    local has_no_proc = false
+
+    if bullet:get("bullet_properties") then
+        has_no_proc = bit.band(bullet:get("bullet_properties"), DAMAGER_NO_PROC) ~= 0
+    end
+    
+    if not has_no_proc then
+        local parent = bullet:getParent()
+        -- If player hits an enemy, increase their damage stat by 1
+        if type(parent) == "PlayerInstance" then
+            local count = parent:countItem(item)
+            if count > 0 then
+                if parent:get("soul-devourer_counter") < 90 + (count * 10) then -- Cap the damage to 100
+                    parent:set("soul-devourer_counter", parent:get("soul-devourer_counter") + count)
+                    parent:set("damage", parent:get("damage") + count)
+                end
             end
         end
     end
     -- If the player takes damage, remove damage gained by item
     if type(hit) == "PlayerInstance" then
-        local count = hit:countItem(item)
+    local count = hit:countItem(item)
         if count > 0 then
             hit:set("damage", hit:get("damage") - hit:get("soul-devourer_counter"))
             hit:set("soul-devourer_counter", 0)
