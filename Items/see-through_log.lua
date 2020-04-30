@@ -22,7 +22,7 @@ objStar:addCallback("create", function(objStar)
 	objStarAc.life = 4 * 60
 	objStarAc.speed = 2
 	objStarAc.size = 1
-	objStarAc.damage = 0.3
+	objStarAc.damage = 0.5
 	objStar.spriteSpeed = 0.25
 end)
 

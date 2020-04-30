@@ -29,7 +29,8 @@ if not modloader.checkFlag("TE_no_items") then
 	require("Items/uranium_bullets")
 	require("Items/super_stickies")
 	require("Items/cursed_longsword")
-
+	require("Items/lycoris")
+	
 	-- Use
 	require("Items/big_scythe")
 	require("Items/hell_chain")

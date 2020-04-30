@@ -62,6 +62,7 @@ registercallback("onHit", function(bullet, hit)
             end
         end
     end
+    
     -- If the player takes damage, remove damage gained by item
     if type(hit) == "PlayerInstance" then
     local count = hit:countItem(item)

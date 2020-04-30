@@ -43,6 +43,13 @@ registercallback("onPlayerStep", function(player)
                 end
             end
 
+            for i, enemy in ipairs(enemies:findMatchingOp("team", "==", "player")) do
+                if distance(player.x, player.y, enemy.x, enemy.y) < player:getData().shroomSize then
+                    enemy:set("hp", enemy:get("hp") + heal)
+                    misc.damage(heal, enemy.x, enemy.y - 10, false, Color.DAMAGE_HEAL)
+                end
+            end
+
             player:getData().shroomTimer = 60
         end
 

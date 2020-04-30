@@ -42,7 +42,7 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
     if teleporter:isValid() then
         if net.host and teleporter:getData().activated == false then
             if teleporter:get("isBig") then
-                ExtraDifficulty.set(ExtraDifficulty.get() + 1)
+                ExtraDifficulty.set(ExtraDifficulty.get() + 2)
                 crateInstance:create(teleporter.x, teleporter.y)
                 Flash(Color.RED)
             else
@@ -95,7 +95,7 @@ registercallback("onStep", function()
                                 local netTeleporter = teleporter:getNetIdentity()
                                 if net.host then
                                     if teleporter:get("isBig") then
-                                        ExtraDifficulty.set(ExtraDifficulty.get() + 1)
+                                        ExtraDifficulty.set(ExtraDifficulty.get() + 2)
                                         crateInstance:create(teleporter.x, teleporter.y)
                                         Flash(Color.RED)
                                     else
