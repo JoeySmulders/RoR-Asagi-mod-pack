@@ -1,7 +1,7 @@
 -- lycoris.lua
 -- Rare tier item that spawns flower traps on killed enemies
 
-local item = Item("Radiant Death")
+local item = Item("Radiant Flower")
 
 item.pickupText = "Killed enemies sprout deadly flowers"
 
@@ -31,7 +31,7 @@ objPlant:addCallback("destroy", function(objPlant)
     local revertDamage = parent:get("damage")
     parent:set("damage", 1)
     parent:set("stun", 1.33)
-    parent:fireExplosion(objPlant.x, objPlant.y, (objPlant.sprite.width * 3) / 19, (objPlant.sprite.height * 3) / 4, objPlantAc.damage, nil, nil, DAMAGER_NO_PROC + DAMAGER_NO_RECALC)
+    parent:fireExplosion(objPlant.x, objPlant.y, (objPlant.sprite.width) / 19, (objPlant.sprite.height) / 4, objPlantAc.damage, nil, nil, DAMAGER_NO_PROC + DAMAGER_NO_RECALC)
     parent:set("damage", revertDamage)
     parent:set("stun", 0)
 end)
@@ -56,22 +56,40 @@ end)
 registercallback("onNPCDeath", function(npc)
     
     -- Get all the damage from all players who have the item
-    if npc:get("free") == 0 then -- TODO: Make this actually work since free is always 0 for death actors
-        local totalDamage = 0
-        local finalPlayer
-        for i, player in ipairs(misc.players) do
+    local totalDamage = 0
+    local finalPlayer
+    for i, player in ipairs(misc.players) do
+        if player:get("dead") == 0 then
             local count = player:countItem(item)
 
             if count > 0 then
                 totalDamage = totalDamage + player:get("damage") * (3 + (2 * count))
             end
-            finalPlayer = player
+            if i == 1 then
+                finalPlayer = player
+            end
+        end
+    end
+
+    if totalDamage > 0 then
+        local plant = objPlant:create(npc.x, npc.y)
+        local yOffset = 1
+
+        -- Check if there is ground 100 pixels below the enemy, otherwise delete the plant
+        while not plant:collidesMap(plant.x, plant.y + yOffset) do
+            yOffset = yOffset + 1
+            if yOffset > 100 then
+                break
+            end
         end
 
-        if totalDamage > 0 then
-            local plant = objPlant:create(npc.x, npc.y)
+        if yOffset < 100 then 
+            plant.y = plant.y + yOffset - 1
+
             plant:set("damage", totalDamage)
             plant:set("parent", finalPlayer.id)
+        else
+            plant:delete()
         end
     end
 

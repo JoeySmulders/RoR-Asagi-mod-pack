@@ -13,7 +13,7 @@ item:setTier("rare")
 local objSword = Object.new("LongSword")
 objSword.sprite = Sprite.load("LongSword", "Items/sprites/longsword", 1, 6, 12)
 objSword.depth = 1
-local rotationSpeed = -0.075
+local rotationSpeed = -0.085
 local movementSpeed = 3
 local attackSpeed = 10
 
@@ -46,7 +46,11 @@ swordTarget = net.Packet("Sword Target Packet", function(player, netTarget)
     local target = netTarget:resolve()
     local sword = player:getData().sword
 
-    sword:getData().target = target
+    if target:isValid() then
+        sword:getData().target = target
+    else
+        sword:getData().target = player
+    end
 
     if net.host then
         swordTarget:sendAsHost(net.EXCLUDE, player)

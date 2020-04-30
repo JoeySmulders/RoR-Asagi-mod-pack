@@ -13,8 +13,8 @@ item:setTier("uncommon")
 local objKnive = Object.new("Knive")
 objKnive.sprite = Sprite.load("Knive", "Items/sprites/knive", 1, 3, 8)
 objKnive.depth = -99
-local movementSpeed = 8
-local rotationSpeed = -0.2
+local movementSpeed = 7
+local rotationSpeed = -0.25
 
 -- Star creation and variables
 objKnive:addCallback("create", function(objKnive)
@@ -24,6 +24,28 @@ objKnive:addCallback("create", function(objKnive)
 	objKniveAc.size = 1
 	objKniveAc.damage = 0.25
     objKnive.spriteSpeed = 0.25
+end)
+
+kniveSync = net.Packet("Knive Target Packet", function(player, netTarget, count)
+
+    local hit = netTarget:resolve()
+
+    if hit:isValid() then
+        local knive = objKnive:create(player.x, player.y)
+        knive:set("parent", player.id)
+        knive:getData().initialTimer = 10
+
+        if hit:getData().kniveMark == nil then
+            hit:getData().kniveMark = count + 3
+        end
+
+        knive:getData().target = hit
+
+        if net.host then
+            kniveSync:sendAsHost(net.EXCLUDE, player, netTarget, count)
+        end 
+    end
+
 end)
 
 objKnive:addCallback("destroy", function(objKnive)
@@ -89,6 +111,7 @@ end)
 
 
 registercallback("preHit", function(bullet, hit)
+    
     local player = bullet:getParent()
     local count = 0
     local has_no_proc = false
@@ -99,29 +122,41 @@ registercallback("preHit", function(bullet, hit)
     
     if not has_no_proc then
         if type(player) == "PlayerInstance" then
-            count = player:countItem(item)
 
-            if count > 0 then
-                if math.chance(25) then -- TODO: SYNC THIS
-                    local knive = objKnive:create(player.x, player.y)
-                    knive:set("parent", player.id)
-                    knive:getData().initialTimer = 10
+            if not net.online or net.localPlayer == player then
+                count = player:countItem(item)
 
-                    if hit:getData().kniveMark == nil then
-                        hit:getData().kniveMark = count + 3
+                if count > 0 then
+                    if math.chance(25) then -- TODO: SYNC THIS
+                        local knive = objKnive:create(player.x, player.y)
+                        knive:set("parent", player.id)
+                        knive:getData().initialTimer = 10
+
+                        if hit:getData().kniveMark == nil then
+                            hit:getData().kniveMark = count + 3
+                        end
+
+                        knive:getData().target = hit
+
+                        local netTarget = hit:getNetIdentity()
+
+                        if net.host then
+                            kniveSync:sendAsHost(net.ALL, nil, netTarget, count)
+                        else
+                            kniveSync:sendAsClient(netTarget, count)
+                        end
+
+                        -- This doesn't need to be synced?
+                        if math.chance(50) then 
+                            knive.angle = 180
+                        else
+                            knive.angle = 0
+                        end
+                    
                     end
-
-                    knive:getData().target = hit
-
-                    -- This doesn't need to be synced?
-                    if math.chance(50) then 
-                        knive.angle = 180
-                    else
-                        knive.angle = 0
-                    end
-                
                 end
             end
+
         end
     end
 

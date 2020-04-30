@@ -18,4 +18,4 @@ TabMenu.setItemInfo(Item.find("Punching Bag"), 4, "Reduce damage taken by 50% wh
 TabMenu.setItemInfo(Item.find("Uranium Bullets"), nil, "Deal 1% of enemy max hp per hit", "+0.5% enemy max hp")
 TabMenu.setItemInfo(Item.find("Super Stickies"), nil, "5% chance on hit to attach 3 stickies that deal 600% damage", "+2 stickies")
 TabMenu.setItemInfo(Item.find("Cursed Longsword"), nil, "Home in on the first target that comes close to you, then continiously deal 50% damage", "+25% damage")
-TabMenu.setItemInfo(Item.find("Radiant Death"), nil, "Killed enemies spawn a flower that deals 500% damage and stuns for 2 seconds", "+200% damage")
+TabMenu.setItemInfo(Item.find("Radiant Flower"), nil, "Killed enemies spawn a flower that deals 500% damage and stuns for 2 seconds", "+200% damage")
