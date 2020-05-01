@@ -7,7 +7,7 @@ require("version")
 -- Load Survivor scripts
 if not modloader.checkFlag("TE_no_survivors") then
 	--require("Survivors/night") -- scrapped?
-	--require("Survivors/buster") -- for 0.3.0
+	require("Survivors/buster") -- for 0.3.0
 end
 
 -- Load Item scripts

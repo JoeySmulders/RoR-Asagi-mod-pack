@@ -4,7 +4,7 @@ local buster = Survivor.new("Buster")
 -- Insert general sprites (idle,walk,jump,climb,death), numbers are amount of frames, x origin and y origin
 local sprites = {
     idle = Sprite.load("buster_idle", "Survivors/buster/idle", 1, 5, 6),
-    walk = Sprite.load("buster_walk", "Survivors/buster/walk", 7, 4, 6),
+    walk = Sprite.load("buster_walk", "Survivors/buster/walk", 7, 5, 6),
 	jump = Sprite.load("buster_jump", "Survivors/buster/jump", 1, 5, 6),
 	climb = Sprite.load("buster_climb", "Survivors/buster/climb", 2, 5, 6),
     death = Sprite.load("buster_death", "Survivors/buster/death", 8, 48, 13),
@@ -13,7 +13,16 @@ local sprites = {
 }
 
 local sprBlast = Sprite.load("buster_blast", "Survivors/buster/blast", 10, 0, 0)
+local sprBar = Sprite.load("buster_bar", "Survivors/buster/bar", 1, 0, 0)
+
+local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 5, 0, 0)
+
+local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 0, 0)
+
 local sprSkills = Sprite.load("buster_skills", "Survivors/buster/skills", 5, 0, 0)
+
+
+local customBar = Object.find("CustomBar")
 
 -- Description and skill icons
 buster:setLoadoutInfo(
@@ -22,17 +31,18 @@ buster:setLoadoutInfo(
 
 -- Character select skill descriptions
 buster:setLoadoutSkill(1, "Blast Strike", 
-[[Charge up a strike and release it to deal up to 500% damage]])
+[[Charge up a strike and release it to deal up to 1000% damage
+The attack can be charged while moving, but deals self damage if left at full charge]])
 
 buster:setLoadoutSkill(2, "Blazing Slam", 
-[[Immediately drop down and slam the ground, dealing up to 300% damage and launching enemies into the air while setting them ablaze.]])
+[[Immediately drop down and slam the ground, dealing up to 400% damage and launching enemies into the air while setting them ablaze.]])
 
 buster:setLoadoutSkill(3, "Slide Boost", 
 [[Slide a short distance in the direction you are walking, or up in the air while standing still
-Instantly charges the Charge Punch to full and cancels other actions when used]])
+Instantly charges the Blast Strike to full and cancels other actions when used]])
 
 buster:setLoadoutSkill(4, "Explosive Scarf", 
-[[Release 10 explosives around you, that will detonate after 1 second for 250% damage each]])
+[[Release 10 explosives around you that will detonate after 1 second for 250% damage each]])
 
 -- Extra menu sprite
 buster.idleSprite = sprites.idle
@@ -59,16 +69,16 @@ buster:addCallback("init", function(player)
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
     "Blast Strike",
-    "Charge up for up to 500% damage",
+    "Charge up for up to 1000% damage",
     sprSkills, 1,
     0.5 * 60
     )
 
     player:setSkill(2,
     "Blazing Slam",
-    "Slam into the ground for up to 300% damage",
+    "Slam into the ground for up to 400% damage",
     sprSkills, 2,
-    3 * 60
+    5 * 60
     )
 
     player:setSkill(3,
@@ -82,7 +92,7 @@ buster:addCallback("init", function(player)
     "Explosive Scarf",
     "Release 10 explosives around you, detonating after 1 second for 250% damage",
     sprSkills, 4,
-    6 * 60
+    8 * 60
     )
 
 end)
@@ -104,13 +114,44 @@ buster:addCallback("scepter", function(player)
 end)
 
 buster:addCallback("step", function(player)
+    -- If the charge bar exists, increase the blastCharge timer
+    if player:getData().chargeBar and player:getData().chargeBar:isValid() then
+        if player:getData().blastCharge < 180 then
+            player:getData().blastCharge = player:getData().blastCharge + 1
+        end
+        -- If the timer is almost at the end, change the color and start taking damage
+        if player:getData().chargeBar:get("time") < 5 then
+            player:getData().chargeBar:set("barColor", Color.fromRGB(198,69,36).gml)
+            player:getData().chargeBar:set("time", 10)
+            player:getData().chargeDamage = true
+        end
+    end
+    -- If the skill button is released, get rid of the charge bar and perform the attack if the player is capable of attacking
     if player:control("ability1") == input.NEUTRAL and player:getData().blastCharging == true then
         if player:get("activity") == 0 then
             -- Activate Z skill
             player:survivorActivityState(1, sprBlast, 0.25, true, true)
         end
         player:getData().blastCharging = false
+        player:getData().chargeDamage = false
+        player:getData().chargeBar:destroy()
     end
+
+    -- Deal damage to the player if the charge is at full
+    if player:getData().chargeDamage == true then
+        if player:getData().chargeDamageTimer <= 0 then
+            local damage = player:get("hp") * 0.2
+            player:set("hp", player:get("hp") - damage)
+            misc.shakeScreen(3)
+            misc.damage(damage, player.x, player.y - 10, false, Color.ORANGE)
+            player:getData().chargeDamageTimer = 60
+        else
+            player:getData().chargeDamageTimer = player:getData().chargeDamageTimer - 1
+        end
+
+    end
+
+
 end)
 
 -- Called when the player tries to use a skill 
@@ -123,11 +164,17 @@ buster:addCallback("useSkill", function(player, skill)
         if skill == 1 and player:getData().blastCharging ~= true then
             player:getData().blastCharging = true
             player:getData().blastCharge = 0
-        end
-        if skill == 1 and player:getData().blastCharging == true then
-            player:getData().blastCharge = player:getData().blastCharge + 1
-        end
 
+            local bar = customBar:create(player.x, player.y + 100)
+			bar.sprite = sprBar
+			bar:set("time", 3 * 60)
+			bar:set("maxtime", 3 * 60)
+			bar:set("barColor", Color.fromRGB(255,255,255).gml)
+			bar:set("parent", player.id)
+			bar:set("charge", 1)
+            player:getData().chargeBar = bar
+            player:getData().chargeDamageTimer = 60
+        end
 
 		if skill == 2 then
 			-- X skill
@@ -161,10 +208,23 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 			-- If the effect is triggered, it returns the fired bullet, otherwise it returns nil
 			if player:survivorFireHeavenCracker(1) == nil then
 				-- The player's "sp" variable is the attack multiplier given by Shattered Mirror
-				for i = 0, player:get("sp") do
+                for i = 0, player:get("sp") do
+
+                    local damage = 0
+                    -- Deal more damage based on how charged the attack is
+                    if player:getData().blastCharge == 180 then
+                        damage = 10
+                    elseif player:getData().blastCharge > 120 then
+                        damage = 5
+                    elseif player:getData().blastCharge > 60 then
+                        damage = 3
+                    else
+                        damage = 1
+                    end
 
                     -- Input some variables based on how long you charged
-					local bullet = player:fireExplosion(player.x + player.xscale * 50, player.y, 100 / 19, 10 / 4, 5, nil, sprSparks7)
+                    local bullet = player:fireExplosion(player.x + player.xscale * 50, player.y, 100 / 19, 10 / 4, damage, nil, sprSparks7)
+                    misc.shakeScreen(damage)
                     
 				end
 			end
@@ -178,14 +238,39 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 		-- X skill: slam
 
         -- Slam down
-		if relevantFrame == 4 then
+        if relevantFrame == 3 then
+            
+            -- Check if there is ground 200 pixels below the player, then teleport to that position
+            local yOffset = 2
+            local i = 0
+            while not player:collidesMap(player.x, player.y + yOffset) do
+                player.y = player.y + 2
+                i = i + 2
+                if i > 200 then
+                    break
+                end
+            end
+
+            local damage = i / 50
+
+            local bullet = player:fireExplosion(player.x, player.y, 100 / 19, 10 / 4, damage, nil, sprSparks7)
+
+            -- If starstorm is loaded set enemies on fire
+            if modloader.checkMod("StarStorm") then
+                DOT.addToDamager(bullet, DOT_FIRE, player:get("damage") * damage * 0.3, 3, "Slam", false)
+            end
+
+            -- Knockup enemies based on the damage done and shake the screen
+            --bullet:set("blaze", 1) don't use this it gives errors
+            bullet:set("knockup", damage * 3)
+            misc.shakeScreen(10)
 
 		end
         
 	elseif skill == 3 then
 		-- C skill: slide
 
-		if relevantFrame == 8 then
+		if relevantFrame == 4 then
 			-- Ran on the last frame of the animation
 			
 		else
