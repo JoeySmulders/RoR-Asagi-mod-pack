@@ -52,26 +52,24 @@ objPlant:addCallback("step", function(objPlant)
     end
 end)
 
--- TODO: Test if this works in mp
+
 registercallback("onNPCDeath", function(npc)
     
     -- Get all the damage from all players who have the item
     local totalDamage = 0
-    local finalPlayer
+    local finalPlayer = nil
     for i, player in ipairs(misc.players) do
         if player:get("dead") == 0 then
             local count = player:countItem(item)
 
             if count > 0 then
                 totalDamage = totalDamage + player:get("damage") * (3 + (2 * count))
-            end
-            if i == 1 then
                 finalPlayer = player
             end
         end
     end
 
-    if totalDamage > 0 then
+    if totalDamage > 0 and finalPlayer ~= nil then
         local plant = objPlant:create(npc.x, npc.y)
         local yOffset = 1
 

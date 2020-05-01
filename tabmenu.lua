@@ -1,8 +1,8 @@
 -- Stack info used by StarStorms detailed Tab Menu. (Item, max stack count, item info, stack info)
 
 -- common
-TabMenu.setItemInfo(Item.find("Angel Wings"), nil, "Increases damage while in the air by 20%", "+7.5% damage")
-TabMenu.setItemInfo(Item.find("Suspicious log"), 10, "Shoot out 8 ninja stars that deal 30% damage every 10 seconds", "-1 seconds")
+TabMenu.setItemInfo(Item.find("Angel Wings"), nil, "Increases damage while in the air by 20%", "+10% damage")
+TabMenu.setItemInfo(Item.find("Suspicious log"), 10, "Shoot out 8 ninja stars that deal 50% damage every 10 seconds", "-1 seconds")
 TabMenu.setItemInfo(Item.find("Mirror shard"), 19, "10% on attack to create a shadow partner for 1 second", "+5% chance")
 TabMenu.setItemInfo(Item.find("Broken LAN cable"), 6, "Delay damage taken by 1 second and reduce it by 10%", "+1 second delay, +2% reduced damage")
 
@@ -17,5 +17,5 @@ TabMenu.setItemInfo(Item.find("Fan of Blades"), nil, "25% on hit to launch a bla
 TabMenu.setItemInfo(Item.find("Punching Bag"), 4, "Reduce damage taken by 50% when standing perfectly still", "+5% reduced damage")
 TabMenu.setItemInfo(Item.find("Uranium Bullets"), nil, "Deal 1% of enemy max hp per hit", "+0.5% enemy max hp")
 TabMenu.setItemInfo(Item.find("Super Stickies"), nil, "5% chance on hit to attach 3 stickies that deal 600% damage", "+2 stickies")
-TabMenu.setItemInfo(Item.find("Cursed Longsword"), nil, "Home in on the first target that comes close to you, then continiously deal 50% damage", "+25% damage")
+TabMenu.setItemInfo(Item.find("Cursed Longsword"), nil, "Home in on the first target that comes close to you, then continuously deal 100% damage", "+75% damage")
 TabMenu.setItemInfo(Item.find("Radiant Flower"), nil, "Killed enemies spawn a flower that deals 500% damage and stuns for 2 seconds", "+200% damage")

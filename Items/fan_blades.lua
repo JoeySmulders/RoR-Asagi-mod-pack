@@ -30,7 +30,7 @@ kniveSync = net.Packet("Knive Target Packet", function(player, netTarget, count)
 
     local hit = netTarget:resolve()
 
-    if hit:isValid() then
+    if hit and hit:isValid() then
         local knive = objKnive:create(player.x, player.y)
         knive:set("parent", player.id)
         knive:getData().initialTimer = 10

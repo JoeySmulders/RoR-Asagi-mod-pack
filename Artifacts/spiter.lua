@@ -52,10 +52,12 @@ end)
 spiteBombs:addCallback("destroy", function(instance)
     if bounce then
         if artifact.active and spite.active then
-            for i = 1, bounceAmount, 1 do
-                local extraSpite = spiteBombs:create(instance.x, instance.y)
-                extraSpite:getData().noReplicate = true
-                instance:getData().bounced = false
+            if instance:getData().noReplicate ~= true then
+                for i = 1, bounceAmount, 1 do
+                    local extraSpite = spiteBombs:create(instance.x, instance.y)
+                    extraSpite:getData().noReplicate = true
+                    instance:getData().bounced = false
+                end
             end
         end
     end

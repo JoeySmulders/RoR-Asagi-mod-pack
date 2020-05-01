@@ -23,7 +23,7 @@ objSword:addCallback("create", function(objSword)
 	objSwordAc.life = 0
 	objSwordAc.speed = 0
 	objSwordAc.size = 1
-	objSwordAc.damage = 0.5
+	objSwordAc.damage = 1
     objSword.spriteSpeed = 0.25
     objSword.angle = 180
     objSword:getData().explosionTimer = 0
@@ -46,7 +46,7 @@ swordTarget = net.Packet("Sword Target Packet", function(player, netTarget)
     local target = netTarget:resolve()
     local sword = player:getData().sword
 
-    if target:isValid() then
+    if target and target:isValid() then
         sword:getData().target = target
     else
         sword:getData().target = player
@@ -84,7 +84,7 @@ objSword:addCallback("step", function(objSword)
 
     if player then
         local count = player:countItem(item) 
-        objSwordAc.damage = 0.25 + (count * 0.25)
+        objSwordAc.damage = 0.25 + (count * 0.75)
 
         if objSword:getData().target:isValid() == false or objSword:getData().target == player then
             local enemy = enemies:findNearest(player.x, player.y)
@@ -168,7 +168,7 @@ end)
 
 item:setLog{
     group = "rare",
-    description = "A longsword will follow the player, and launch it self at nearby enemies and deal 30% damage continuously",
+    description = "A longsword will follow the player, and launch it self at nearby enemies and deal 100% damage continuously",
     story = "",
     destination = "",
     date = ""
