@@ -6,7 +6,8 @@ require("version")
 
 -- Load Survivor scripts
 if not modloader.checkFlag("TE_no_survivors") then
-	--require("night")
+	--require("Survivors/night") -- scrapped?
+	--require("Survivors/buster") -- for 0.3.0
 end
 
 -- Load Item scripts
@@ -45,6 +46,7 @@ end
 if not modloader.checkFlag("TE_no_artifacts") then
 	require("Artifacts/spiter")
 	require("Artifacts/turbo")
+	--require("Artifacts/corruption") for 0.4.0
 	require("Artifacts/worms")
 	require("Artifacts/pain")
 end
