@@ -66,18 +66,26 @@ registercallback("onStep", function()
         -- If the player dies, create a new command crate of the same type
         if crateRespawn then
             for key, data in pairs(activeCrates) do
-                if data.player:get("dead") == 1 then 
+                if data.player and data.player:isValid() then
+                    if data.player:get("dead") == 1 then
 
-                    -- Crates are naturally synced, so only the host has to create a new one for it to work
+                        -- Crates are naturally synced, so only the host has to create a new one for it to work
+                        if net.host then
+                            data.crate:create(data.crateX, data.crateY)
+                        end
+
+                        activeCrates[key] = nil  
+                    else
+                        if data.player:get("activity") ~= 95 then
+                            activeCrates[key] = nil  
+                        end
+                    end
+                else
+                    -- Erase the table value and recreate the chest if the player doesn't exist anymore
                     if net.host then
                         data.crate:create(data.crateX, data.crateY)
                     end
-
-                    activeCrates[key] = nil  
-                else
-                    if data.player:get("activity") ~= 95 then
-                        activeCrates[key] = nil  
-                    end
+                    activeCrates[key] = nil
                 end
 
             end
