@@ -10,6 +10,8 @@ local magmaWorm = MonsterCard.find("Magma Worm", "Vanilla")
 local wormHead = Object.find("WormHead", "Vanilla")
 local wormBody = Object.find("WormBody", "Vanilla")
 
+
+-- Maybe do this on gamestart?
 magmaWorm.eliteTypes:add(elite.Freezing)
 
 local freezeTimer = 2 * 60

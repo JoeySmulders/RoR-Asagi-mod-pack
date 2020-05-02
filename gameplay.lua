@@ -37,32 +37,37 @@ end
 
 -- Sync teleporter challenge
 teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, netTeleporter)
-    local teleporter = netTeleporter:resolve()
+    if isa(netTeleporter, "number") then
+        log(netTeleporter .. " Teleporter number?")
+    else
+        local teleporter = netTeleporter:resolve()
 
-    if teleporter:isValid() then
-        if net.host and teleporter:getData().activated == false then
-            if teleporter:get("isBig") then
-                ExtraDifficulty.set(ExtraDifficulty.get() + 2)
-                crateInstance:create(teleporter.x, teleporter.y)
-                Flash(Color.RED)
+        if teleporter:isValid() then
+            if net.host and teleporter:getData().activated == false then
+                if teleporter:get("isBig") then
+                    ExtraDifficulty.set(ExtraDifficulty.get() + 2)
+                    crateInstance:create(teleporter.x, teleporter.y)
+                    Flash(Color.RED)
+                else
+                    local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                    Flash(Color.BLACK)
+                end    
+                misc.director:set("spawn_boss", 1)
+                misc.director:set("points", getTeleporterPoints()) 
+                teleporter:getData().activated = true
+                teleporterPacket:sendAsHost(net.ALL, nil, netTeleporter)
             else
-                local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
-                Flash(Color.BLACK)
-            end    
-            misc.director:set("spawn_boss", 1)
-            misc.director:set("points", getTeleporterPoints()) 
-            teleporter:getData().activated = true
-            teleporterPacket:sendAsHost(net.ALL, nil, netTeleporter)
-        else
-            if teleporter:get("isBig") then
-                Flash(Color.RED)
-            else
-                Flash(Color.BLACK)
+                if teleporter:get("isBig") then
+                    Flash(Color.RED)
+                    ExtraDifficulty.set(ExtraDifficulty.get() + 2)
+                else
+                    Flash(Color.BLACK)
+                end
+                teleporter:getData().activated = true
+                teleporter:getData().inTeleporter = false
             end
-            teleporter:getData().activated = true
-            teleporter:getData().inTeleporter = false
-        end
-    end 
+        end 
+    end
 end)
 
 

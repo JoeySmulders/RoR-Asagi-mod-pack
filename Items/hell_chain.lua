@@ -7,7 +7,7 @@ item.pickupText = "Link all enemies, making them share damage taken by half"
 item.sprite = Sprite.load("Items/sprites/hell_chain", 1, 14, 14)
 item:setTier("use")
 item.isUseItem = true
-item.useCooldown = 20
+item.useCooldown = 40
 
 ItemPool.find("enigma", "vanilla"):add(item)
 

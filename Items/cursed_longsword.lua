@@ -53,7 +53,7 @@ swordTarget = net.Packet("Sword Target Packet", function(player, netTarget)
     end
 
     if net.host then
-        swordTarget:sendAsHost(net.EXCLUDE, player)
+        swordTarget:sendAsHost(net.EXCLUDE, player, netTarget)
     end
 end)
 

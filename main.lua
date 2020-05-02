@@ -5,13 +5,13 @@ require("resources")
 require("version")
 
 -- Load Survivor scripts
-if not modloader.checkFlag("TE_no_survivors") then
+if not modloader.checkFlag("TE_no_survivor") then
 	--require("Survivors/night") -- scrapped?
 	require("Survivors/buster") -- for 0.3.0
 end
 
 -- Load Item scripts
-if not modloader.checkFlag("TE_no_items") then
+if not modloader.checkFlag("TE_no_item") then
 	-- Common
 	require("Items/wings")
 	require("Items/broken_lan_cable")
@@ -38,12 +38,12 @@ if not modloader.checkFlag("TE_no_items") then
 end
 
 -- Load Elite Type scripts
-if not modloader.checkFlag("TE_no_elites") then
+if not modloader.checkFlag("TE_no_elite") then
 	require("Elites/freeze")
 end
 
 -- Load Artifact scripts
-if not modloader.checkFlag("TE_no_artifacts") then
+if not modloader.checkFlag("TE_no_artifact") then
 	require("Artifacts/spiter")
 	require("Artifacts/turbo")
 	--require("Artifacts/corruption") for 0.4.0
