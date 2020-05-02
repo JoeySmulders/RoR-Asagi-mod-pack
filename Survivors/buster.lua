@@ -35,11 +35,12 @@ buster:setLoadoutSkill(1, "Blast Strike",
 The attack can be charged while moving, but deals self damage if left at full charge]])
 
 buster:setLoadoutSkill(2, "Blazing Slam", 
-[[Immediately drop down and slam the ground, dealing up to 400% damage and launching enemies into the air while setting them ablaze.]])
+[[Immediately drop down and slam the ground, dealing up to 600% damage based on distance fell.
+On impact, launches enemies into the air while setting them ablaze for 30% of the damage dealt.]])
 
 buster:setLoadoutSkill(3, "Slide Boost", 
-[[Slide a short distance in the direction you are walking, or up in the air while standing still
-Instantly charges the Blast Strike to full and cancels other actions when used]])
+[[Slide a short distance in the direction you are walking, or up in the air while not moving left or right
+Instantly charges the Blast Strike to full when used while charging]])
 
 buster:setLoadoutSkill(4, "Explosive Scarf", 
 [[Release 10 explosives around you that will detonate after 1 second for 250% damage each]])
@@ -69,14 +70,14 @@ buster:addCallback("init", function(player)
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
     "Blast Strike",
-    "Charge up for up to 1000% damage",
+    "Charge up a strike for up to 1000% damage",
     sprSkills, 1,
     0.5 * 60
     )
 
     player:setSkill(2,
     "Blazing Slam",
-    "Slam into the ground for up to 400% damage",
+    "Slam into the ground for up to 600% damage",
     sprSkills, 2,
     5 * 60
     )
@@ -122,7 +123,7 @@ buster:addCallback("step", function(player)
         -- If the timer is almost at the end, change the color and start taking damage
         if player:getData().chargeBar:get("time") < 5 then
             player:getData().chargeBar:set("barColor", Color.fromRGB(198,69,36).gml)
-            player:getData().chargeBar:set("time", 10)
+            player:getData().chargeBar:set("time", 5)
             player:getData().chargeDamage = true
         end
     end
@@ -140,7 +141,7 @@ buster:addCallback("step", function(player)
     -- Deal damage to the player if the charge is at full
     if player:getData().chargeDamage == true then
         if player:getData().chargeDamageTimer <= 0 then
-            local damage = player:get("hp") * 0.2
+            local damage = player:get("hp") * 0.1
             player:set("hp", player:get("hp") - damage)
             misc.shakeScreen(3)
             misc.damage(damage, player.x, player.y - 10, false, Color.ORANGE)
@@ -166,9 +167,10 @@ buster:addCallback("useSkill", function(player, skill)
             player:getData().blastCharge = 0
 
             local bar = customBar:create(player.x, player.y + 100)
-			bar.sprite = sprBar
-			bar:set("time", 3 * 60)
-			bar:set("maxtime", 3 * 60)
+            bar.sprite = sprBar
+            local time = (3 * 60) / player:get("attack_speed")
+			bar:set("time", time)
+			bar:set("maxtime", time)
 			bar:set("barColor", Color.fromRGB(255,255,255).gml)
 			bar:set("parent", player.id)
 			bar:set("charge", 1)
@@ -256,7 +258,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
             while not player:collidesMap(player.x, player.y + yOffset) do
                 player.y = player.y + 2
                 i = i + 2
-                if i > 200 then
+                if i > 300 then
                     break
                 end
             end
@@ -272,7 +274,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
             -- Knockup enemies based on the damage done and shake the screen
             --bullet:set("blaze", 1) don't use this it gives errors
-            bullet:set("knockup", damage * 3)
+            bullet:set("knockup", damage * 2.5)
             misc.shakeScreen(10)
 
 		end
@@ -284,7 +286,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
             player:set("pVspeed", -1 * player:get("pVmax") * 1 * player.yscale)
         else
             -- Set the player's horizontal speed
-            player:set("pHspeed", player:get("pHmax") * 2.5 * player.xscale)
+            player:set("pHspeed", player:get("pHmax") * 3 * player.xscale)
 
             -- Cancel the ability by jumping
             if player:control("jump") == input.PRESSED then
