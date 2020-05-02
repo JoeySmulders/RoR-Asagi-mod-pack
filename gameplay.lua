@@ -70,7 +70,7 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
     end
 end)
 
-
+-- TODO: rewrite this stuff to be a bit more logical
 -- Check if the teleporter is in active state 1 and if a player is next to it, then check if they press A
 registercallback("onStep", function()
     if teleportEnabled == true then
@@ -115,6 +115,7 @@ registercallback("onStep", function()
                                 else
                                     teleporterPacket:sendAsClient(netTeleporter)
                                 end
+                                player:getData().teleporterLoop = true
                             end
                         end
                     end

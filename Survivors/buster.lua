@@ -85,7 +85,7 @@ buster:addCallback("init", function(player)
     "Slide Boost",
     "Slide along the ground or boost into the air depending on movement",
     sprSkills, 3,
-    1 * 60
+    3 * 60
     )
 
     player:setSkill(4,
@@ -180,9 +180,19 @@ buster:addCallback("useSkill", function(player, skill)
 			-- X skill
             player:survivorActivityState(2, sprSlam, 0.25, true, true)
 		elseif skill == 3 then
-			-- C skill
-            player:survivorActivityState(3, sprSlide, 0.25, false, false)
-            player:getData().blastCharge = 100 -- Insert full bar
+            -- C skill
+            
+            if player:get("pHspeed") == 0 then
+                player:getData().slideUp = true
+            else
+                player:getData().slideUp = false
+            end
+
+            player:survivorActivityState(3, sprDash, 0.25, false, false)
+            if player:getData().blastCharging == true then
+                player:getData().blastCharge = 100 -- Insert full bar
+                player:getData().chargeBar:set("time", 5)
+            end
 		elseif skill == 4 then
 			-- V skill
             player:survivorActivityState(4, sprExplosive, 0.25, true, true)
@@ -270,18 +280,21 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 	elseif skill == 3 then
 		-- C skill: slide
 
-		if relevantFrame == 4 then
-			-- Ran on the last frame of the animation
-			
-		else
-			-- Ran all other frames of the animation
+        if player:getData().slideUp == true then
+            player:set("pVspeed", -1 * player:get("pVmax") * 1 * player.yscale)
+        else
+            -- Set the player's horizontal speed
+            player:set("pHspeed", player:get("pHmax") * 2.5 * player.xscale)
 
-		end
-		
-		
+            -- Cancel the ability by jumping
+            if player:control("jump") == input.PRESSED then
+                player:set("activity_type", 0)
+                player:set("activity", 0)
+            end
+        end
 		
 	elseif skill == 4 then
-		-- V skill: Skull charge
+		-- V skill: Explosives
 
 		if relevantFrame == 4 then
 		

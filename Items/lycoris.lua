@@ -54,40 +54,41 @@ end)
 
 
 registercallback("onNPCDeath", function(npc)
-    
-    -- Get all the damage from all players who have the item
-    local totalDamage = 0
-    local finalPlayer = nil
-    for i, player in ipairs(misc.players) do
-        if player:get("dead") == 0 then
-            local count = player:countItem(item)
+    if npc then
+        -- Get all the damage from all players who have the item
+        local totalDamage = 0
+        local finalPlayer = nil
+        for i, player in ipairs(misc.players) do
+            if player:get("dead") == 0 then
+                local count = player:countItem(item)
 
-            if count > 0 then
-                totalDamage = totalDamage + player:get("damage") * (3 + (2 * count))
-                finalPlayer = player
-            end
-        end
-    end
-
-    if totalDamage > 0 and finalPlayer ~= nil then
-        local plant = objPlant:create(npc.x, npc.y)
-        local yOffset = 1
-
-        -- Check if there is ground 100 pixels below the enemy, otherwise delete the plant
-        while not plant:collidesMap(plant.x, plant.y + yOffset) do
-            yOffset = yOffset + 1
-            if yOffset > 100 then
-                break
+                if count > 0 then
+                    totalDamage = totalDamage + player:get("damage") * (3 + (2 * count))
+                    finalPlayer = player
+                end
             end
         end
 
-        if yOffset < 100 then 
-            plant.y = plant.y + yOffset - 1
+        if totalDamage > 0 and finalPlayer ~= nil then
+            local plant = objPlant:create(npc.x, npc.y)
+            local yOffset = 1
 
-            plant:set("damage", totalDamage)
-            plant:set("parent", finalPlayer.id)
-        else
-            plant:delete()
+            -- Check if there is ground 100 pixels below the enemy, otherwise delete the plant
+            while not plant:collidesMap(plant.x, plant.y + yOffset) do
+                yOffset = yOffset + 1
+                if yOffset > 100 then
+                    break
+                end
+            end
+
+            if yOffset < 100 then 
+                plant.y = plant.y + yOffset - 1
+
+                plant:set("damage", totalDamage)
+                plant:set("parent", finalPlayer.id)
+            else
+                plant:delete()
+            end
         end
     end
 
