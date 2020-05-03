@@ -3,7 +3,7 @@
 
 local item = Item("Suspicious log")
 
-item.pickupText = "Shoot out ninja stars every 10 seconds"
+item.pickupText = "Shoot out ninja stars every 5 seconds"
 
 item.sprite = Sprite.load("Items/sprites/See-through_log", 1, 12, 13)
 
@@ -82,7 +82,7 @@ registercallback("onPlayerStep", function(player)
             end
             direction = 0
             -- Stacking item reduces cooldown by 1 second, to 1 second max.
-            player:set("log-star_timer", (11 - math.min(count, 10)) * 60)
+            player:set("log-star_timer", (5.5 - math.min((count * 0.5), 4.5)) * 60)
         end
 
         player:set("log-star_timer", player:get("log-star_timer") - 1)
@@ -91,7 +91,7 @@ end)
 
 item:setLog{
     group = "common",
-    description = "Shoot out 8 ninja stars around you every 10 seconds for 30% damage",
+    description = "Shoot out 8 ninja stars around you every 5 seconds for 30% damage",
     story = "",
     destination = "",
     date = ""

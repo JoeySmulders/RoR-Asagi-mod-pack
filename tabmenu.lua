@@ -2,7 +2,7 @@
 
 -- common
 TabMenu.setItemInfo(Item.find("Angel Wings"), nil, "Increases damage while in the air by 20%", "+10% damage")
-TabMenu.setItemInfo(Item.find("Suspicious log"), 10, "Shoot out 8 ninja stars that deal 50% damage every 10 seconds", "-1 seconds")
+TabMenu.setItemInfo(Item.find("Suspicious log"), 9, "Shoot out 8 ninja stars that deal 50% damage every 5 seconds", "-0.5 seconds")
 TabMenu.setItemInfo(Item.find("Mirror shard"), 19, "10% on attack to create a shadow partner for 1 second", "+5% chance")
 TabMenu.setItemInfo(Item.find("Broken LAN cable"), 6, "Delay damage taken by 1 second and reduce it by 10%", "+1 second delay, +2% reduced damage")
 

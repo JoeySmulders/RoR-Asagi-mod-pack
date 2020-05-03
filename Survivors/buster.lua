@@ -12,7 +12,16 @@ local sprites = {
     decoy = Sprite.load("buster_decoy", "Survivors/buster/decoy", 1, 9, 18),
 }
 
-local sprBlast = Sprite.load("buster_blast", "Survivors/buster/blast", 10, 0, 0)
+local sprBlast = Sprite.load("buster_blast", "Survivors/buster/blast", 5, 6, 5)
+local sprBlast1 = Sprite.load("buster_blast1", "Survivors/buster/blast1", 3, 3, 3)
+local sprBlast1left = Sprite.load("buster_blast1left", "Survivors/buster/blast1left", 3, 7, 3)
+local sprBlast2 = Sprite.load("buster_blast2", "Survivors/buster/blast2", 3, 3, 3)
+local sprBlast2left = Sprite.load("buster_blast2left", "Survivors/buster/blast2left", 3, 17, 3)
+local sprBlast3 = Sprite.load("buster_blast3", "Survivors/buster/blast3", 3, 3, 3)
+local sprBlast3left = Sprite.load("buster_blast3left", "Survivors/buster/blast3left", 3, 37, 3)
+local sprBlast4 = Sprite.load("buster_blast4", "Survivors/buster/blast4", 3, 3, 9)
+local sprBlast4left = Sprite.load("buster_blast4left", "Survivors/buster/blast4left", 3, 117, 9)
+
 local sprBar = Sprite.load("buster_bar", "Survivors/buster/bar", 1, 0, 0)
 local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 5, 0, 0)
 local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 0, 0)
@@ -23,6 +32,10 @@ local sprSkills = Sprite.load("buster_skills", "Survivors/buster/skills", 5, 0, 
 
 local customBar = Object.find("CustomBar")
 
+
+local blast1 = ParticleType.new("Blast1")
+blast1:sprite(sprBlast1, true, true, false)
+blast1:life(0.2 * 60, 0.2 * 60)
 
 -- explosion Object
 local objExplode = Object.new("ExplosiveScarf")
@@ -105,7 +118,7 @@ buster:addCallback("init", function(player)
     player:setAnimations(sprites)
 
     -- survivor starting stats (health, damage, regen)
-    player:survivorSetInitialStats(130, 12, 0.01)
+    player:survivorSetInitialStats(130, 14, 0.01)
 
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
@@ -137,14 +150,12 @@ buster:addCallback("init", function(player)
     )
 
     player:set("pHmax", 1.2)
-    log(player:get("pHmax"))
-
 end)
 
 -- Increase character stats on levelup
 buster:addCallback("levelUp", function(player)
     -- (health, damage, regen, armor)
-    player:survivorLevelUpStats(30, 4, 0.001, 1)
+    player:survivorLevelUpStats(32, 4, 0.001, 2)
 end)
 
 -- Change skill 4 description when scepter is picked up
@@ -175,7 +186,7 @@ buster:addCallback("step", function(player)
     if player:control("ability1") == input.NEUTRAL and player:getData().blastCharging == true then
         if player:get("activity") == 0 then
             -- Activate Z skill
-            player:survivorActivityState(1, sprBlast, 0.25, true, true)
+            player:survivorActivityState(1, sprBlast, 0.20, true, true)
         end
         player:getData().blastCharging = false
         player:getData().chargeDamage = false
@@ -236,7 +247,7 @@ buster:addCallback("useSkill", function(player, skill)
 
             player:survivorActivityState(3, sprDash, 0.25, false, false)
             if player:getData().blastCharging == true then
-                player:getData().blastCharge = 100 -- Insert full bar
+                player:getData().blastCharge = 180 -- Insert full bar
                 player:getData().chargeBar:set("time", 5)
             end
 		elseif skill == 4 then
@@ -267,19 +278,49 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                 for i = 0, player:get("sp") do
 
                     local damage = 0
+                    local sprite = sprBlast1
+
                     -- Deal more damage based on how charged the attack is
                     if player:getData().blastCharge == 180 then
                         damage = 10
+
+                        if player:getFacingDirection() == 180 then
+                            sprite = sprBlast4left
+                        else
+                            sprite = sprBlast4
+                        end
+
                     elseif player:getData().blastCharge > 120 then
                         damage = 5
+
+                        if player:getFacingDirection() == 180 then
+                            sprite = sprBlast3left
+                        else
+                            sprite = sprBlast3
+                        end
+
                     elseif player:getData().blastCharge > 60 then
                         damage = 3
+
+                        if player:getFacingDirection() == 180 then
+                            sprite = sprBlast2left
+                        else
+                            sprite = sprBlast2
+                        end
+
                     else
                         damage = 1
+
+                        if player:getFacingDirection() == 180 then
+                            sprite = sprBlast1left
+                        else
+                            sprite = sprBlast1
+                        end
+                        
                     end
 
                     -- Input some variables based on how long you charged
-                    local bullet = player:fireExplosion(player.x + player.xscale * 50, player.y, 100 / 19, 10 / 4, damage, nil, sprSparks7)
+                    local bullet = player:fireExplosion(player.x + player.xscale * 10, player.y + 1, sprite.width / 19, sprite.height / 4, damage, sprite, sprSparks7)
                     misc.shakeScreen(damage)
                     
 				end
@@ -352,7 +393,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 end)
 
 registercallback("onPlayerDeath", function(player)
-    if player:getData().chargeBar then
+    if player:getData().chargeBar and player:getData().chargeBar:isValid() then
         player:getData().chargeBar:destroy()
     end
 

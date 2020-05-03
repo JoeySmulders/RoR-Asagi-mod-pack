@@ -7,7 +7,8 @@ local teleportEnabled = true
 local foundTeleporter
 local playerObject = ParentObject.find("P", "Vanilla")
 local currentPlayer
-local crateInstance = Object.find("Artifact8Box3")
+local greenCrateInstance = Object.find("Artifact8Box2")
+local redCrateInstance = Object.find("Artifact8Box3")
 local whiteFlash = Object.find("WhiteFlash")
 
 -- Starstorm rules
@@ -46,10 +47,10 @@ teleporterPacket = net.Packet("Activate Teleporter Challenge", function(player, 
             if net.host and teleporter:getData().activated == false then
                 if teleporter:get("isBig") then
                     ExtraDifficulty.set(ExtraDifficulty.get() + 2)
-                    crateInstance:create(teleporter.x, teleporter.y)
+                    redCrateInstance:create(teleporter.x, teleporter.y)
                     Flash(Color.RED)
                 else
-                    local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                    local cloverInstance = greenCrateInstance:create(teleporter.x, teleporter.y)
                     Flash(Color.BLACK)
                 end    
                 misc.director:set("spawn_boss", 1)
@@ -101,10 +102,10 @@ registercallback("onStep", function()
                                 if net.host then
                                     if teleporter:get("isBig") then
                                         ExtraDifficulty.set(ExtraDifficulty.get() + 2)
-                                        crateInstance:create(teleporter.x, teleporter.y)
+                                        redCrateInstance:create(teleporter.x, teleporter.y)
                                         Flash(Color.RED)
                                     else
-                                        local cloverInstance = clover:create(teleporter.x, teleporter.y - 20)
+                                        local cloverInstance = greenCrateInstance:create(teleporter.x, teleporter.y)
                                         Flash(Color.BLACK)
                                     end                            
                                     misc.director:set("spawn_boss", 1)
