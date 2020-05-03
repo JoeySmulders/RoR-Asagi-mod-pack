@@ -25,39 +25,35 @@ local sprBlast4left = Sprite.load("buster_blast4left", "Survivors/buster/blast4l
 local sprBar = Sprite.load("buster_bar", "Survivors/buster/bar", 1, 0, 0)
 local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 5, 0, 0)
 local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 0, 0)
-local sprExplosive = Sprite.load("buster_explosive", "Survivors/buster/scarf", 5, 0, 0)
+local sprExplosive = Sprite.load("buster_explosive", "Survivors/buster/scarf", 5, 2, 2)
 
 local sprSkills = Sprite.load("buster_skills", "Survivors/buster/skills", 5, 0, 0)
 
 
 local customBar = Object.find("CustomBar")
 
-
-local blast1 = ParticleType.new("Blast1")
-blast1:sprite(sprBlast1, true, true, false)
-blast1:life(0.2 * 60, 0.2 * 60)
-
 -- explosion Object
 local objExplode = Object.new("ExplosiveScarf")
-objExplode.sprite = Sprite.load("ExplosiveScarf", "Survivors/buster/explosive", 1, 5, 5)
+objExplode.sprite = Sprite.load("ExplosiveScarf", "Survivors/buster/bomb", 1, 5, 5)
 objExplode.depth = 1
 
 -- Explosive creation and variables
 objExplode:addCallback("create", function(objExplode)
 	local objExplodeAc = objExplode:getAccessor()
-	objExplodeAc.life = 2 * 60
+	objExplodeAc.life = 5 * 60
 	objExplodeAc.speed = 0
 	objExplodeAc.size = 1
-	objExplodeAc.damage = 25
-	objExplode.spriteSpeed = 0.25
+	objExplodeAc.damage = 2.5
+    objExplode.spriteSpeed = 0.25
+    objExplode:getData().velocity = -4
 end)
 
-objExplode:addCallback("destroy", function(objExplode)
-    local objExplodeAc = objExplode:getAccessor()
+objExplode:addCallback("destroy", function(obj)
+    local objExplodeAc = obj:getAccessor()
     local parent = Object.findInstance(objExplodeAc.parent)
     
     if parent:isValid() then
-        parent:fireExplosion(objExplode.x, objExplode.y, (objExplode.sprite.width * 10) / 19, (objExplode.sprite.height * 10) / 4, objExplodeAc.damage, nil, nil, DAMAGER_NO_PROC)
+        parent:fireExplosion(obj.x, obj.y, (obj.sprite.width * 10) / 19, (obj.sprite.height * 10) / 4, objExplodeAc.damage, nil, nil, DAMAGER_NO_PROC)
     end
 end)
 
@@ -65,10 +61,25 @@ end)
 objExplode:addCallback("step", function(objExplode)
 	local objExplodeAc = objExplode:getAccessor()
 
+    objExplode.angle = objExplode.angle + objExplode:getData().rotation
+
+    objExplode.y = objExplode.y + objExplode:getData().velocity
+    objExplode.x = objExplode.x + objExplode:getData().xVelocity
+
+    objExplode:getData().velocity = objExplode:getData().velocity + 0.1
+
+    local enemy = enemies:findNearest(objExplode.x, objExplode.y)
+
+    if enemy and objExplode:collidesWith(enemy, objExplode.x, objExplode.y) then
+        objExplode:destroy()
+    end
+
     if objExplode:isValid() then
         if objExplodeAc.life == 0 then
             objExplode:destroy()
-	    else
+        elseif objExplode:collidesMap(objExplode.x, objExplode.y) then
+            objExplode:destroy()
+        else
             objExplodeAc.life = objExplodeAc.life - 1
         end
     end
@@ -88,7 +99,7 @@ buster:setLoadoutSkill(1, "Blast Strike",
 The attack can be &b&charged during other actions&!&, but deals &r&self damage if left at full charge&!&.]])
 
 buster:setLoadoutSkill(2, "Blazing Slam", 
-[[Immediately drop down and slam the ground, dealing &y&up to 600% damage&!& based on distance fallen.
+[[Immediately drop down and slam the ground, dealing &y&up to 750% damage&!& based on distance fallen.
 On impact, &y&launches enemies into the air&!& while setting them &y&ablaze for 30% of the damage dealt&!&.]])
 
 buster:setLoadoutSkill(3, "Slide Boost", 
@@ -96,7 +107,7 @@ buster:setLoadoutSkill(3, "Slide Boost",
 &b&Instantly charges Blast Strike to full&!& when used while charging, and &b&jumping cancels the slide&!&.]])
 
 buster:setLoadoutSkill(4, "Explosive Scarf", 
-[[Release &y&10 explosives&!& around you that will detonate after 2 seconds for &y&250% damage each&!&.]])
+[[Release &y&10 explosives&!& around you that will detonate when hitting the ground for &y&250% damage each&!&.]])
 
 -- Extra menu sprite
 buster.idleSprite = sprites.idle
@@ -123,7 +134,7 @@ buster:addCallback("init", function(player)
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
     "Blast Strike",
-    "Charge up a strike for up to 1000% damage",
+    "Charge up a strike for up to 1250% damage",
     sprSkills, 1,
     0.5 * 60
     )
@@ -144,9 +155,9 @@ buster:addCallback("init", function(player)
 
     player:setSkill(4,
     "Explosive Scarf",
-    "Release 10 explosives around you, detonating after 2 seconds for 250% damage",
+    "Release 10 explosives around you, detonating after hitting the ground for 250% damage",
     sprSkills, 4,
-    12 * 60
+    10 * 60
     )
 
     player:set("pHmax", 1.2)
@@ -162,9 +173,9 @@ end)
 buster:addCallback("scepter", function(player)
     player:setSkill(4,
     "Chain Explosive Scarf",
-    "Release 10 explosives around you, detonating after 1 second for 250% damage and releasing more explosives",
+    "Release 10 explosives around you, detonating after hitting the ground for 250% damage and releasing more explosives",
     sprSkills, 5,
-    6 * 60
+    10 * 60
     )
 end)
 
@@ -172,12 +183,12 @@ buster:addCallback("step", function(player)
     -- If the charge bar exists, increase the blastCharge timer
     if player:getData().chargeBar and player:getData().chargeBar:isValid() then
         if player:getData().blastCharge < 180 then
-            player:getData().blastCharge = player:getData().blastCharge + 1
+            player:getData().blastCharge = player:getData().blastCharge + (1 * player:get("attack_speed"))
         end
         -- If the timer is almost at the end, change the color and start taking damage
-        if player:getData().chargeBar:get("time") < 5 then
+        if player:getData().chargeBar:get("time") < 2 then
             player:getData().chargeBar:set("barColor", Color.fromRGB(198,69,36).gml)
-            player:getData().chargeBar:set("time", 5)
+            player:getData().chargeBar:set("time", 2)
             player:getData().chargeDamage = true
         end
     end
@@ -281,8 +292,8 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                     local sprite = sprBlast1
 
                     -- Deal more damage based on how charged the attack is
-                    if player:getData().blastCharge == 180 then
-                        damage = 10
+                    if player:getData().blastCharge >= 180 then
+                        damage = 12.5
 
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast4left
@@ -291,7 +302,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                         end
 
                     elseif player:getData().blastCharge > 120 then
-                        damage = 5
+                        damage = 7.5
 
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast3left
@@ -300,7 +311,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                         end
 
                     elseif player:getData().blastCharge > 60 then
-                        damage = 3
+                        damage = 5
 
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast2left
@@ -337,18 +348,18 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
         -- Slam down
         if relevantFrame == 3 then
             
-            -- Check if there is ground 200 pixels below the player, then teleport to that position
+            -- Check if there is ground 150 pixels below the player, then teleport to that position
             local yOffset = 2
             local i = 0
             while not player:collidesMap(player.x, player.y + yOffset) do
-                player.y = player.y + 2
-                i = i + 2
-                if i > 300 then
+                player.y = player.y + yOffset
+                i = i + 1
+                if i > 150 then
                     break
                 end
             end
 
-            local damage = i / 50
+            local damage = 2.5 + (i / 30)
 
             local bullet = player:fireExplosion(player.x, player.y, 100 / 19, 10 / 4, damage, nil, sprSparks7)
 
@@ -359,7 +370,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
             -- Knockup enemies based on the damage done and shake the screen
             --bullet:set("blaze", 1) don't use this it gives errors
-            bullet:set("knockup", 2 + (damage * 2))
+            bullet:set("knockup", (damage * 2))
             misc.shakeScreen(10)
 
 		end
@@ -384,13 +395,20 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 		-- V skill: Explosives
 
         if relevantFrame == 4 then
-            
-            local explosive = objExplode:create(player.x, player.y)
-            explosive:set("parent", player.id)
+            local xVelocity = -1
+            for i = 1, 10, 1 do
+                local explosive = objExplode:create(player.x, player.y)
+                explosive:getData().xVelocity = xVelocity
+                explosive:set("parent", player.id)
+                explosive:getData().rotation = math.random(-5,5)
+                xVelocity = xVelocity + 0.2
+                -- TODO: insert scepter stuff
+            end
 		end
 	
 	end
 end)
+
 
 registercallback("onPlayerDeath", function(player)
     if player:getData().chargeBar and player:getData().chargeBar:isValid() then
