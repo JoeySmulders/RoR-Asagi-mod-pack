@@ -76,8 +76,8 @@ objExplode:addCallback("step", function(objExplode)
 
     if enemy and objExplode:collidesWith(enemy, objExplode.x, objExplode.y) then
         if objExplode:getData().sticky == true then
-            objExplode.x = enemy.x
-            objExplode.y = enemy.y
+            objExplode.x = enemy.x + objExplode:getData().stickyOffset
+            objExplode.y = enemy.y + objExplode:getData().stickyOffset
             objExplodeAc.damage = 5
             objExplode:getData().stickied = true
         else          
@@ -190,6 +190,22 @@ buster:addCallback("scepter", function(player)
     )
 end)
 
+-- Only perform the actual skill once the player sends a packet telling them to do it
+playerBlast = net.Packet("Buster Blast Sync", function(player)
+    if player:get("activity") == 0 then
+        -- Activate Z skill
+        player:survivorActivityState(1, sprBlast, 0.20, true, true)
+    end
+    player:getData().blastCharging = false
+    player:getData().chargeDamage = false
+    player:getData().chargeBar:destroy()
+
+    if net.host then
+        playerBlast:sendAsHost(net.EXCLUDE, player)
+    end
+end)
+
+
 buster:addCallback("step", function(player)
     -- If the charge bar exists, increase the blastCharge timer
     if player:getData().chargeBar and player:getData().chargeBar:isValid() then
@@ -205,14 +221,22 @@ buster:addCallback("step", function(player)
     end
 
     -- If the skill button is released, get rid of the charge bar and perform the attack if the player is capable of attacking
-    if player:control("ability1") == input.NEUTRAL and player:getData().blastCharging == true then
-        if player:get("activity") == 0 then
-            -- Activate Z skill
-            player:survivorActivityState(1, sprBlast, 0.20, true, true)
+    if not net.online or net.localPlayer == player then
+        if player:control("ability1") == input.NEUTRAL and player:getData().blastCharging == true then
+            if player:get("activity") == 0 then
+                -- Activate Z skill
+                player:survivorActivityState(1, sprBlast, 0.20, true, true)
+            end
+            player:getData().blastCharging = false
+            player:getData().chargeDamage = false
+            player:getData().chargeBar:destroy()
+
+            if net.host then
+                playerBlast:sendAsHost(net.ALL, nil)
+            else
+                playerBlast:sendAsClient()
+            end
         end
-        player:getData().blastCharging = false
-        player:getData().chargeDamage = false
-        player:getData().chargeBar:destroy()
     end
 
     -- Deal damage to the player if the charge is at full
@@ -417,6 +441,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                 explosive:getData().rotation = math.random(-5,5)
                 xVelocity = xVelocity + 0.2
                 if player:get("scepter") > 0 then
+                    explosive:getData().stickyOffset = math.random(-5,5)
                     explosive:getData().sticky = true
                 end
             end
