@@ -23,8 +23,10 @@ local sprBlast4 = Sprite.load("buster_blast4", "Survivors/buster/blast4", 3, 3, 
 local sprBlast4left = Sprite.load("buster_blast4left", "Survivors/buster/blast4left", 3, 117, 9)
 
 local sprBar = Sprite.load("buster_bar", "Survivors/buster/bar", 1, 0, 0)
-local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 5, 0, 0)
-local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 0, 0)
+local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 3, 5, 12)
+local sprSlamDunk = Sprite.load("buster_slamDunk", "Survivors/buster/dunkblast", 3, 23, 14)
+
+local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 10, 16)
 local sprExplosive = Sprite.load("buster_explosive", "Survivors/buster/scarf", 5, 2, 2)
 
 local sprSkills = Sprite.load("buster_skills", "Survivors/buster/skills", 5, 0, 0)
@@ -35,7 +37,7 @@ local customBar = Object.find("CustomBar")
 -- explosion Object
 local objExplode = Object.new("ExplosiveScarf")
 objExplode.sprite = Sprite.load("ExplosiveScarf", "Survivors/buster/bomb", 1, 5, 5)
-objExplode.depth = 1
+objExplode.depth = -99
 
 -- Explosive creation and variables
 objExplode:addCallback("create", function(objExplode)
@@ -61,23 +63,32 @@ end)
 objExplode:addCallback("step", function(objExplode)
 	local objExplodeAc = objExplode:getAccessor()
 
-    objExplode.angle = objExplode.angle + objExplode:getData().rotation
+    if not objExplode:getData().stickied == true then
+        objExplode.angle = objExplode.angle + objExplode:getData().rotation
 
-    objExplode.y = objExplode.y + objExplode:getData().velocity
-    objExplode.x = objExplode.x + objExplode:getData().xVelocity
+        objExplode.y = objExplode.y + objExplode:getData().velocity
+        objExplode.x = objExplode.x + objExplode:getData().xVelocity
 
-    objExplode:getData().velocity = objExplode:getData().velocity + 0.1
+        objExplode:getData().velocity = objExplode:getData().velocity + 0.1
+    end
 
     local enemy = enemies:findNearest(objExplode.x, objExplode.y)
 
     if enemy and objExplode:collidesWith(enemy, objExplode.x, objExplode.y) then
-        objExplode:destroy()
+        if objExplode:getData().sticky == true then
+            objExplode.x = enemy.x
+            objExplode.y = enemy.y
+            objExplodeAc.damage = 5
+            objExplode:getData().stickied = true
+        else          
+            objExplode:destroy()
+        end
     end
 
     if objExplode:isValid() then
         if objExplodeAc.life == 0 then
             objExplode:destroy()
-        elseif objExplode:collidesMap(objExplode.x, objExplode.y) then
+        elseif objExplode:collidesMap(objExplode.x, objExplode.y) and not objExplode:getData().stickied == true then
             objExplode:destroy()
         else
             objExplodeAc.life = objExplodeAc.life - 1
@@ -90,7 +101,7 @@ end)
 -- Description and skill icons
 buster:setLoadoutInfo(
 [[&y&Buster&!& is a master of explosives, he fearlessly charges into battle
-This survivor focuses on using positioning and timing to deliver extremely high damage at close ranges]]
+This survivor focuses on using positioning and timing to deliver high damage at close ranges]]
 , sprSkills)
 
 -- Character select skill descriptions
@@ -129,12 +140,12 @@ buster:addCallback("init", function(player)
     player:setAnimations(sprites)
 
     -- survivor starting stats (health, damage, regen)
-    player:survivorSetInitialStats(130, 14, 0.01)
+    player:survivorSetInitialStats(130, 9, 0.01)
 
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
     "Blast Strike",
-    "Charge up a strike for up to 1250% damage",
+    "Charge up a strike for up to 1000% damage",
     sprSkills, 1,
     0.5 * 60
     )
@@ -166,14 +177,14 @@ end)
 -- Increase character stats on levelup
 buster:addCallback("levelUp", function(player)
     -- (health, damage, regen, armor)
-    player:survivorLevelUpStats(32, 4, 0.001, 2)
+    player:survivorLevelUpStats(32, 5, 0.001, 2)
 end)
 
 -- Change skill 4 description when scepter is picked up
 buster:addCallback("scepter", function(player)
     player:setSkill(4,
-    "Chain Explosive Scarf",
-    "Release 10 explosives around you, detonating after hitting the ground for 250% damage and releasing more explosives",
+    "Sticky Explosive Scarf",
+    "Release 10 explosives around you, detonating after hitting the ground for 250% damage or sticking to enemies for 500% damage",
     sprSkills, 5,
     10 * 60
     )
@@ -246,7 +257,7 @@ buster:addCallback("useSkill", function(player, skill)
 
 		if skill == 2 then
 			-- X skill
-            player:survivorActivityState(2, sprSlam, 0.25, true, true)
+            player:survivorActivityState(2, sprSlam, 0.10, true, true)
 		elseif skill == 3 then
             -- C skill
             
@@ -293,7 +304,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
                     -- Deal more damage based on how charged the attack is
                     if player:getData().blastCharge >= 180 then
-                        damage = 12.5
+                        damage = 10
 
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast4left
@@ -346,7 +357,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 		-- X skill: slam
 
         -- Slam down
-        if relevantFrame == 3 then
+        if relevantFrame == 2 then
             
             -- Check if there is ground 150 pixels below the player, then teleport to that position
             local yOffset = 2
@@ -361,7 +372,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
             local damage = 2.5 + (i / 30)
 
-            local bullet = player:fireExplosion(player.x, player.y, 100 / 19, 10 / 4, damage, nil, sprSparks7)
+            local bullet = player:fireExplosion(player.x, player.y, sprSlamDunk.width / 19, sprSlamDunk.height / 4, damage, sprSlamDunk, sprSparks7)
 
             -- If starstorm is loaded set enemies on fire
             if modloader.checkMod("StarStorm") then
@@ -378,8 +389,11 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 	elseif skill == 3 then
 		-- C skill: slide
 
+        -- If going up, just give a vertical boost and end the ability
         if player:getData().slideUp == true then
-            player:set("pVspeed", -1 * player:get("pVmax") * 1 * player.yscale)
+            player:set("pVspeed", -1 * player:get("pVmax") * 1.5 * player.yscale)
+            player:set("activity_type", 0)
+            player:set("activity", 0)
         else
             -- Set the player's horizontal speed
             player:set("pHspeed", player:get("pHmax") * 3 * player.xscale)
@@ -402,7 +416,9 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                 explosive:set("parent", player.id)
                 explosive:getData().rotation = math.random(-5,5)
                 xVelocity = xVelocity + 0.2
-                -- TODO: insert scepter stuff
+                if player:get("scepter") > 0 then
+                    explosive:getData().sticky = true
+                end
             end
 		end
 	
