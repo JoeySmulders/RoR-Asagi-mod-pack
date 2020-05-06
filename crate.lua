@@ -107,17 +107,15 @@ registercallback("onStep", function()
 
                             local oldPositionX = crate.x 
                             local oldPositionY = crate.y
-                            
-                            local crateNet = crate:getNetIdentity()
 
                             data.player:set("activity", 0)
                             data.player:set("activity_type", 0)
 
                             if net.host then
                                 data.crate:create(oldPositionX, oldPositionY)
-                                crateNetBackout:sendAsHost(net.ALL, nil, crateNet, data.crate, oldPositionX, oldPositionY)
+                                crateNetBackout:sendAsHost(net.ALL, nil, crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
                             else
-                                crateNetBackout:sendAsClient(crateNet, data.crate, oldPositionX, oldPositionY)
+                                crateNetBackout:sendAsClient(crate:getNetIdentity(), data.crate, oldPositionX, oldPositionY)
                             end
 
                             crate:set("active", 0)

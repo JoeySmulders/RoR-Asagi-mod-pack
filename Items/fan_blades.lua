@@ -138,12 +138,10 @@ registercallback("preHit", function(bullet, hit)
 
                         knive:getData().target = hit
 
-                        local netTarget = hit:getNetIdentity()
-
                         if net.host then
-                            kniveSync:sendAsHost(net.ALL, nil, netTarget, count)
+                            kniveSync:sendAsHost(net.ALL, nil, hit:getNetIdentity(), count)
                         else
-                            kniveSync:sendAsClient(netTarget, count)
+                            kniveSync:sendAsClient(hit:getNetIdentity(), count)
                         end
 
                         -- This doesn't need to be synced?

@@ -98,7 +98,6 @@ registercallback("onStep", function()
                     if player:getData().teleporterLoop == false then                       
                         if player:control("enter") == input.PRESSED and player.x > teleporter.x - 50 and player.x < teleporter.x + 50 and player.y > teleporter.y -50 and player.y < teleporter.y + 50 then
                             if not net.online or net.localPlayer == player then
-                                local netTeleporter = teleporter:getNetIdentity()
                                 if net.host then
                                     if teleporter:get("isBig") then
                                         ExtraDifficulty.set(ExtraDifficulty.get() + 2)
@@ -112,9 +111,9 @@ registercallback("onStep", function()
                                     misc.director:set("points", getTeleporterPoints()) -- Change this so it also scales with difficulty 
                                     teleporter:getData().activated = true
                                     teleporter:getData().inTeleporter = false
-                                    teleporterPacket:sendAsHost(net.ALL, nil, netTeleporter)
+                                    teleporterPacket:sendAsHost(net.ALL, nil, teleporter:getNetIdentity())
                                 else
-                                    teleporterPacket:sendAsClient(netTeleporter)
+                                    teleporterPacket:sendAsClient(teleporter:getNetIdentity())
                                 end
                                 player:getData().teleporterLoop = true
                             end

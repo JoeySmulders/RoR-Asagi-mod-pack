@@ -46,9 +46,10 @@ swordTarget = net.Packet("Sword Target Packet", function(player, netTarget)
     local target = netTarget:resolve()
     local sword = player:getData().sword
 
-    if target and target:isValid() then
+    -- Add a sword is valid too lmao
+    if target and target:isValid() and sword and sword:isValid() then
         sword:getData().target = target
-    else
+    elseif sword and sword:isValid() then
         sword:getData().target = player
     end
 
@@ -64,13 +65,11 @@ function sendSwordTarget(objSword, player)
     else
         objSword:getData().target = player
 
-        netTarget = player:getNetIdentity()
-
         if not net.online or net.localPlayer == player then
             if net.host then
-                swordTarget:sendAsHost(net.ALL, nil, netTarget)
+                swordTarget:sendAsHost(net.ALL, nil, player:getNetIdentity())
             else
-                swordTarget:sendAsClient(netTarget)
+                swordTarget:sendAsClient(player:getNetIdentity())
             end
         end
 
@@ -93,13 +92,12 @@ objSword:addCallback("step", function(objSword)
                 local netTarget
                 if distance(player.x, player.y, enemy.x, enemy.y) < 250 then
                     objSword:getData().target = enemy
-                    netTarget = enemy:getNetIdentity()
 
                     if not net.online or net.localPlayer == player then
                         if net.host then
-                            swordTarget:sendAsHost(net.ALL, nil, netTarget)
+                            swordTarget:sendAsHost(net.ALL, nil, enemy:getNetIdentity())
                         else
-                            swordTarget:sendAsClient(netTarget)
+                            swordTarget:sendAsClient(enemy:getNetIdentity())
                         end
                     end
 
@@ -115,37 +113,42 @@ objSword:addCallback("step", function(objSword)
         if objSword:getData().target:isValid() then
             -- TODO: Make an idle state when following the player where it follows you similar to the sniper drone
 
-            --  Try to match rotation with the target
-            if objSword:getData().target and objSword:getData().target:isValid() then
+            -- Stop following a tamed enemy
+            if objSword:getData().target ~= player and objSword:getData().target:get("team") == player:get("team") then
+                objSword:getData().target = player
+            else
+                --  Try to match rotation with the target
+                if objSword:getData().target and objSword:getData().target:isValid() then
 
-                mathX = objSword:getData().target.x - objSword.x
-                mathY = objSword:getData().target.y	- objSword.y 
+                    mathX = objSword:getData().target.x - objSword.x
+                    mathY = objSword:getData().target.y	- objSword.y 
 
-                local goalAngle = -math.atan2(mathY, mathX)
+                    local goalAngle = -math.atan2(mathY, mathX)
 
-                goalAngle = math.deg(goalAngle)
-                goalAngle = goalAngle - 90 -- For some reason
+                    goalAngle = math.deg(goalAngle)
+                    goalAngle = goalAngle - 90 -- For some reason
 
-                local angleDiff = angleDif(objSword.angle, goalAngle) -- Neik approved migraine medicine
+                    local angleDiff = angleDif(objSword.angle, goalAngle) -- Neik approved migraine medicine
 
-                objSword.angle = objSword.angle + (angleDiff) * rotationSpeed
+                    objSword.angle = objSword.angle + (angleDiff) * rotationSpeed
 
-                -- Move forward in the direction the sword is facing
-                local angle = math.rad(objSword.angle)
-                objSword.x = objSword.x + math.sin(angle) * -movementSpeed
-                objSword.y = objSword.y + math.cos(angle) * -movementSpeed
+                    -- Move forward in the direction the sword is facing
+                    local angle = math.rad(objSword.angle)
+                    objSword.x = objSword.x + math.sin(angle) * -movementSpeed
+                    objSword.y = objSword.y + math.cos(angle) * -movementSpeed
 
-                -- If colliding with an enemy, create explosions
-                if objSword:getData().explosionTimer <= 0 then
+                    -- If colliding with an enemy, create explosions
+                    if objSword:getData().explosionTimer <= 0 then
 
-                    local closestEnemy = enemies:findNearest(objSword.x, objSword.y)
-                    if closestEnemy and objSword:collidesWith(closestEnemy, objSword.x, objSword.y) and player:isValid() then
-                        player:fireExplosion(objSword.x, objSword.y, (objSword.sprite.width) / 19, (objSword.sprite.height) / 4, objSwordAc.damage, nil, nil, DAMAGER_NO_PROC)
+                        local closestEnemy = enemies:findNearest(objSword.x, objSword.y)
+                        if closestEnemy and objSword:collidesWith(closestEnemy, objSword.x, objSword.y) and player:isValid() then
+                            player:fireExplosion(objSword.x, objSword.y, (objSword.sprite.width) / 19, (objSword.sprite.height) / 4, objSwordAc.damage, nil, nil, DAMAGER_NO_PROC)
+                        end
+                        
+                        objSword:getData().explosionTimer = attackSpeed
+                    else
+                        objSword:getData().explosionTimer = objSword:getData().explosionTimer - 1
                     end
-                    
-                    objSword:getData().explosionTimer = attackSpeed
-                else
-                    objSword:getData().explosionTimer = objSword:getData().explosionTimer - 1
                 end
             end
         end

@@ -198,7 +198,9 @@ playerBlast = net.Packet("Buster Blast Sync", function(player)
     end
     player:getData().blastCharging = false
     player:getData().chargeDamage = false
-    player:getData().chargeBar:destroy()
+    if player:getData().chargeBar and player:getData().chargeBar:isValid() then
+        player:getData().chargeBar:destroy()
+    end
 
     if net.host then
         playerBlast:sendAsHost(net.EXCLUDE, player)
@@ -229,7 +231,9 @@ buster:addCallback("step", function(player)
             end
             player:getData().blastCharging = false
             player:getData().chargeDamage = false
-            player:getData().chargeBar:destroy()
+            if player:getData().chargeBar and player:getData().chargeBar:isValid() then
+                player:getData().chargeBar:destroy()
+            end
 
             if net.host then
                 playerBlast:sendAsHost(net.ALL, nil)
@@ -367,6 +371,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
                     -- Input some variables based on how long you charged
                     local bullet = player:fireExplosion(player.x + player.xscale * 10, player.y + 1, sprite.width / 19, sprite.height / 4, damage, sprite, sprSparks7)
+                    bullet.spriteSpeed = 0.2
                     misc.shakeScreen(damage)
                     
 				end
@@ -397,6 +402,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
             local damage = 2.5 + (i / 30)
 
             local bullet = player:fireExplosion(player.x, player.y, sprSlamDunk.width / 19, sprSlamDunk.height / 4, damage, sprSlamDunk, sprSparks7)
+            bullet.spriteSpeed = 0.2
 
             -- If starstorm is loaded set enemies on fire
             if modloader.checkMod("StarStorm") then
