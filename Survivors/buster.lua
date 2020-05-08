@@ -15,12 +15,12 @@ local sprites = {
 local sprBlast = Sprite.load("buster_blast", "Survivors/buster/blast", 5, 6, 5)
 local sprBlast1 = Sprite.load("buster_blast1", "Survivors/buster/blast1", 3, 3, 3)
 local sprBlast1left = Sprite.load("buster_blast1left", "Survivors/buster/blast1left", 3, 7, 3)
-local sprBlast2 = Sprite.load("buster_blast2", "Survivors/buster/blast2", 3, 3, 3)
-local sprBlast2left = Sprite.load("buster_blast2left", "Survivors/buster/blast2left", 3, 17, 3)
-local sprBlast3 = Sprite.load("buster_blast3", "Survivors/buster/blast3", 3, 3, 3)
-local sprBlast3left = Sprite.load("buster_blast3left", "Survivors/buster/blast3left", 3, 37, 3)
-local sprBlast4 = Sprite.load("buster_blast4", "Survivors/buster/blast4", 3, 3, 9)
-local sprBlast4left = Sprite.load("buster_blast4left", "Survivors/buster/blast4left", 3, 117, 9)
+local sprBlast2 = Sprite.load("buster_blast2", "Survivors/buster/blast2", 3, 10, 3)
+local sprBlast2left = Sprite.load("buster_blast2left", "Survivors/buster/blast2left", 3, 10, 3)
+local sprBlast3 = Sprite.load("buster_blast3", "Survivors/buster/blast3", 3, 20, 3)
+local sprBlast3left = Sprite.load("buster_blast3left", "Survivors/buster/blast3left", 3, 20, 3)
+local sprBlast4 = Sprite.load("buster_blast4", "Survivors/buster/blast4", 3, 60, 9)
+local sprBlast4left = Sprite.load("buster_blast4left", "Survivors/buster/blast4left", 3, 60, 9)
 
 local sprBar = Sprite.load("buster_bar", "Survivors/buster/bar", 1, 0, 0)
 local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 3, 5, 12)
@@ -28,16 +28,16 @@ local sprSlamDunk = Sprite.load("buster_slamDunk", "Survivors/buster/dunkblast",
 
 local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 10, 16)
 local sprExplosive = Sprite.load("buster_explosive", "Survivors/buster/scarf", 5, 2, 2)
+local sprExplosion = Sprite.load("buster_explosion", "Survivors/buster/explosion", 3, 14, 14)
 
 local sprSkills = Sprite.load("buster_skills", "Survivors/buster/skills", 5, 0, 0)
-
 
 local customBar = Object.find("CustomBar")
 
 -- explosion Object
 local objExplode = Object.new("ExplosiveScarf")
 objExplode.sprite = Sprite.load("ExplosiveScarf", "Survivors/buster/bomb", 1, 5, 5)
-objExplode.depth = -99
+objExplode.depth = -14
 
 -- Explosive creation and variables
 objExplode:addCallback("create", function(objExplode)
@@ -55,7 +55,7 @@ objExplode:addCallback("destroy", function(obj)
     local parent = Object.findInstance(objExplodeAc.parent)
     
     if parent:isValid() then
-        parent:fireExplosion(obj.x, obj.y, (obj.sprite.width * 10) / 19, (obj.sprite.height * 10) / 4, objExplodeAc.damage, nil, nil, DAMAGER_NO_PROC)
+        parent:fireExplosion(obj.x, obj.y, (sprExplosion.width) / 19, (sprExplosion.height) / 4, objExplodeAc.damage, sprExplosion, nil, DAMAGER_NO_PROC)
     end
 end)
 
@@ -370,7 +370,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                     end
 
                     -- Input some variables based on how long you charged
-                    local bullet = player:fireExplosion(player.x + player.xscale * 10, player.y + 1, sprite.width / 19, sprite.height / 4, damage, sprite, sprSparks7)
+                    local bullet = player:fireExplosion(player.x + player.xscale * (sprite.width / 2), player.y + 1, (sprite.width / 2) / 19, sprite.height / 4, damage, sprite, sprSparks7)
                     bullet.spriteSpeed = 0.2
                     misc.shakeScreen(damage)
                     

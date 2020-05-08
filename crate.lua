@@ -155,7 +155,7 @@ registercallback("onStep", function()
     end
 end)
 
---[[]
+--[[
 -- Teleporter crate stuff
 
 local crateTeleporter = true

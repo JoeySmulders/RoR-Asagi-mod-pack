@@ -64,10 +64,17 @@ registercallback("onPlayerStep", function(player)
     if player:getData().frozen == 1 then
         player:set("disable_ai", 1)
 
-        if player:get("free") == 1 then
-            player.y = player.y + 5
+        -- Move at 5 pixels per frame, then get the distance to the ground exactly
+        local yOffset = 5
+        if not player:collidesMap(player.x, player.y + yOffset) then
+            player.y = player.y + yOffset
+        else
+            while player:collidesMap(player.x, player.y + yOffset) and yOffset > 0 do
+                yOffset = yOffset - 1
+            end
+            player.y = player.y + yOffset
         end
-
+        
         player.sprite = player:getAnimation("idle")
         player:getData().frozenTimer = player:getData().frozenTimer - 1
 

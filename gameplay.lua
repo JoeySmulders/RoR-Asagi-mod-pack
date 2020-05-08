@@ -1,11 +1,7 @@
 -- if teleporter is in active state 1, let the player activate it again to spawn another boss/more mobs and gain a clover
 
-local clover = Object.find("Clover", "Vanilla")
 local teleporters = Object.find("Teleporter", "Vanilla")
-local activated = false
 local teleportEnabled = true
-local foundTeleporter
-local playerObject = ParentObject.find("P", "Vanilla")
 local currentPlayer
 local greenCrateInstance = Object.find("Artifact8Box2")
 local redCrateInstance = Object.find("Artifact8Box3")
@@ -127,7 +123,7 @@ end)
 
 registercallback("onDraw", function()
     for i, teleporter in pairs(teleporters:findAll()) do
-        if teleporter:getData().inTeleporter == true and teleporter:getData().activated == false then
+        if teleporter:get("active") < 3 and teleporter:getData().inTeleporter == true and teleporter:getData().activated == false then
             if teleporter:get("isBig") == 1 then
                 graphics.printColor("&w&Press &!&&y&'" .. input.getControlString("enter", currentPlayer)  .. "'&!&&w& to die.&!&", teleporter.x - 40, teleporter.y - 80, graphics.FONT_DEFAULT)
             else
