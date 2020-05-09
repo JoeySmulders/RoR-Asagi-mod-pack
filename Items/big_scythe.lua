@@ -4,7 +4,7 @@
 local item = Item("Big Scythe")
 
 item.pickupText = "Deal massive damage to a random enemy"
-item.sprite = Sprite.load("Items/sprites/Big_scythe", 1, 13, 13)
+item.sprite = Sprite.load("Items/sprites/Big_scythe", 2, 14, 15)
 item:setTier("use")
 item.isUseItem = true
 item.useCooldown = 30

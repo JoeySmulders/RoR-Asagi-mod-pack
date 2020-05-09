@@ -7,7 +7,7 @@ local sprites = {
     walk = Sprite.load("buster_walk", "Survivors/buster/walk", 7, 5, 6),
 	jump = Sprite.load("buster_jump", "Survivors/buster/jump", 1, 5, 6),
 	climb = Sprite.load("buster_climb", "Survivors/buster/climb", 2, 5, 6),
-    death = Sprite.load("buster_death", "Survivors/buster/death", 8, 48, 13),
+    death = Sprite.load("buster_death", "Survivors/buster/death", 3, 9, 6),
     -- decoy from Crudely Drawn Buddy
     decoy = Sprite.load("buster_decoy", "Survivors/buster/decoy", 1, 9, 18),
 }
@@ -27,12 +27,17 @@ local sprSlam = Sprite.load("buster_slam", "Survivors/buster/dunk", 3, 5, 12)
 local sprSlamDunk = Sprite.load("buster_slamDunk", "Survivors/buster/dunkblast", 3, 23, 14)
 
 local sprDash = Sprite.load("buster_dash", "Survivors/buster/dash", 5, 10, 16)
-local sprExplosive = Sprite.load("buster_explosive", "Survivors/buster/scarf", 5, 2, 2)
+local sprExplosive = Sprite.load("buster_explosive", "Survivors/buster/scarf", 4, 5, 8)
 local sprExplosion = Sprite.load("buster_explosion", "Survivors/buster/explosion", 3, 14, 14)
 
 local sprSkills = Sprite.load("buster_skills", "Survivors/buster/skills", 5, 0, 0)
 
 local customBar = Object.find("CustomBar")
+
+-- sounds
+local sBusterSkill1 = Sound.load("BusterSkill1", "Survivors/buster/skill1")
+local sBusterSkill2 = Sound.load("BusterSkill2", "Survivors/buster/skill2")
+local sBusterExplosion = Sound.load("BusterExplosion", "Survivors/buster/explosion")
 
 -- explosion Object
 local objExplode = Object.new("ExplosiveScarf")
@@ -56,6 +61,9 @@ objExplode:addCallback("destroy", function(obj)
     
     if parent:isValid() then
         parent:fireExplosion(obj.x, obj.y, (sprExplosion.width) / 19, (sprExplosion.height) / 4, objExplodeAc.damage, sprExplosion, nil, DAMAGER_NO_PROC)
+        
+        -- Play explosion sound effect
+        sBusterExplosion:play(0.9 + math.random() * 0.2)
     end
 end)
 
@@ -74,12 +82,16 @@ objExplode:addCallback("step", function(objExplode)
 
     local enemy = enemies:findNearest(objExplode.x, objExplode.y)
 
-    if enemy and objExplode:collidesWith(enemy, objExplode.x, objExplode.y) then
+    if enemy and (objExplode:collidesWith(enemy, objExplode.x, objExplode.y) or objExplode:getData().stickied) then
         if objExplode:getData().sticky == true then
             objExplode.x = enemy.x + objExplode:getData().stickyOffset
             objExplode.y = enemy.y + objExplode:getData().stickyOffset
-            objExplodeAc.damage = 5
-            objExplode:getData().stickied = true
+            objExplodeAc.damage = 7.5
+            if objExplode:getData().stickied ~= true then
+                objExplodeAc.life = 2 * 60
+                objExplode:getData().stickied = true
+            end
+            
         else          
             objExplode:destroy()
         end
@@ -118,7 +130,7 @@ buster:setLoadoutSkill(3, "Slide Boost",
 &b&Instantly charges Blast Strike to full&!& when used while charging, and &b&jumping cancels the slide&!&.]])
 
 buster:setLoadoutSkill(4, "Explosive Scarf", 
-[[Release &y&10 explosives&!& around you that will detonate when hitting the ground for &y&250% damage each&!&.]])
+[[Release &y&10 explosives&!& around you that will detonate when hitting the ground or an enemy for &y&250% damage each&!&.]])
 
 -- Extra menu sprite
 buster.idleSprite = sprites.idle
@@ -166,7 +178,7 @@ buster:addCallback("init", function(player)
 
     player:setSkill(4,
     "Explosive Scarf",
-    "Release 10 explosives around you, detonating after hitting the ground for 250% damage",
+    "Release 10 explosives around you, detonating after hitting the ground or an enemy for 250% damage",
     sprSkills, 4,
     10 * 60
     )
@@ -184,7 +196,7 @@ end)
 buster:addCallback("scepter", function(player)
     player:setSkill(4,
     "Sticky Explosive Scarf",
-    "Release 10 explosives around you, detonating after hitting the ground for 250% damage or sticking to enemies for 500% damage",
+    "Release 10 explosives around you, detonating after hitting the ground for 250% damage or sticking to enemies for 750% damage",
     sprSkills, 5,
     10 * 60
     )
@@ -298,7 +310,9 @@ buster:addCallback("useSkill", function(player, skill)
             player:survivorActivityState(3, sprDash, 0.25, false, false)
             if player:getData().blastCharging == true then
                 player:getData().blastCharge = 180 -- Insert full bar
-                player:getData().chargeBar:set("time", 5)
+                if player:getData().chargeBar and player:getData().chargeBar:isValid() then
+                    player:getData().chargeBar:set("time", 5)
+                end
             end
 		elseif skill == 4 then
 			-- V skill
@@ -320,29 +334,29 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 		
 		if relevantFrame == 4 then
 			-- Code is ran when the 4th frame of the animation starts
-			
+
+            local audio = 1
 			-- The "survivorFireHeavenCracker" method handles the effects of the item Heaven Cracker
 			-- If the effect is triggered, it returns the fired bullet, otherwise it returns nil
 			if player:survivorFireHeavenCracker(1) == nil then
 				-- The player's "sp" variable is the attack multiplier given by Shattered Mirror
                 for i = 0, player:get("sp") do
-
                     local damage = 0
                     local sprite = sprBlast1
-
+                    
                     -- Deal more damage based on how charged the attack is
                     if player:getData().blastCharge >= 180 then
                         damage = 10
-
+                        audio = 2
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast4left
                         else
                             sprite = sprBlast4
                         end
-
+                        
                     elseif player:getData().blastCharge > 120 then
                         damage = 7.5
-
+                        audio = 1.5
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast3left
                         else
@@ -351,7 +365,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
                     elseif player:getData().blastCharge > 60 then
                         damage = 5
-
+                        audio = 1.25
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast2left
                         else
@@ -360,7 +374,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 
                     else
                         damage = 1
-
+                        audio = 1
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast1left
                         else
@@ -378,7 +392,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 			end
 			
 			-- Play explosion sound effect
-			
+            sBusterSkill1:play(0.9 + math.random() * 0.2, audio)
 		end
 		
 		
@@ -414,7 +428,10 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
             bullet:set("knockup", (damage * 2))
             misc.shakeScreen(10)
 
-		end
+            sBusterSkill2:play(0.9 + math.random() * 0.2, 1.75)
+
+
+        end
         
 	elseif skill == 3 then
 		-- C skill: slide
@@ -438,7 +455,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
 	elseif skill == 4 then
 		-- V skill: Explosives
 
-        if relevantFrame == 4 then
+        if relevantFrame == 3 then
             local xVelocity = -1
             for i = 1, 10, 1 do
                 local explosive = objExplode:create(player.x, player.y)

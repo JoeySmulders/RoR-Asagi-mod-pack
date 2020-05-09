@@ -13,31 +13,33 @@ item:setTier("uncommon")
 
 -- Create an item on death
 registercallback("onPlayerDeath", function(player)
-    local count = player:countItem(item)
+    if net.host then
+        local count = player:countItem(item)
 
-    if count > 0 then
-        local location = math.random(-25, 25)
-        local n = 0
-        local xx = player.x + location
-        while n < 50 and Stage.collidesPoint(xx, player.y) do
-            xx = math.approach(xx, player.x, 1)
-            n = n + 1
+        if count > 0 then
+            local location = math.random(-25, 25)
+            local n = 0
+            local xx = player.x + location
+            while n < 50 and Stage.collidesPoint(xx, player.y) do
+                xx = math.approach(xx, player.x, 1)
+                n = n + 1
+            end
+
+            -- Stacking the item increases the chance of gold and medium chests by 10%
+            if math.chance((10 * count) - 9) then
+                chest = Object.find("Chest5")
+            elseif math.chance(9 + (10 * count)) then
+                chest = Object.find("Chest2")
+            else
+                chest = Object.find("Chest1")
+            end
+
+            local ichest = chest:create(xx, player.y)
+            ichest:set("cost", 0)
+            misc.shakeScreen(5)
+
         end
         
-
-        -- Stacking the item increases the chance of gold and medium chests by 10%
-        if math.chance((10 * count) - 9) then
-            chest = Object.find("Chest5")
-        elseif math.chance(9 + (10 * count)) then
-            chest = Object.find("Chest2")
-        else
-            chest = Object.find("Chest1")
-        end
-
-        local ichest = chest:create(xx, player.y)
-        ichest:set("cost", 0)
-        misc.shakeScreen(5)
-
     end
 
 end)

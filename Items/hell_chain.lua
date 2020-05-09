@@ -4,7 +4,7 @@
 local item = Item("Bloody Cross")
 
 item.pickupText = "Link all enemies, making them share damage taken by half"
-item.sprite = Sprite.load("Items/sprites/hell_chain", 1, 14, 14)
+item.sprite = Sprite.load("Items/sprites/hell_chain", 2, 13, 14)
 item:setTier("use")
 item.isUseItem = true
 item.useCooldown = 40
