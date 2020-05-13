@@ -23,7 +23,7 @@ objSword:addCallback("create", function(objSword)
 	objSwordAc.life = 0
 	objSwordAc.speed = 0
 	objSwordAc.size = 1
-	objSwordAc.damage = 1
+	objSwordAc.damage = 1.5
     objSword.spriteSpeed = 0.25
     objSword.angle = 180
     objSword:getData().explosionTimer = 0
@@ -83,7 +83,7 @@ objSword:addCallback("step", function(objSword)
 
     if player then
         local count = player:countItem(item) 
-        objSwordAc.damage = 0.25 + (count * 0.75)
+        objSwordAc.damage = 0.5 + (count * 1)
 
         if objSword:getData().target:isValid() == false or objSword:getData().target == player then
             local enemy = enemies:findNearest(player.x, player.y)
@@ -142,7 +142,7 @@ objSword:addCallback("step", function(objSword)
 
                         local closestEnemy = enemies:findNearest(objSword.x, objSword.y)
                         if closestEnemy and objSword:collidesWith(closestEnemy, objSword.x, objSword.y) and player:isValid() then
-                            player:fireExplosion(objSword.x, objSword.y, (objSword.sprite.width) / 19, (objSword.sprite.height) / 4, objSwordAc.damage, nil, nil, DAMAGER_NO_PROC)
+                            misc.fireExplosion(objSword.x, objSword.y, objSword.sprite.width / 19, objSword.sprite.height / 4, objSwordAc.damage * player:get("damage") , "player" ,nil, nil)
                         end
                         
                         objSword:getData().explosionTimer = attackSpeed
@@ -171,7 +171,7 @@ end)
 
 item:setLog{
     group = "rare",
-    description = "A longsword will follow the player, and launch it self at nearby enemies and deal 100% damage continuously",
+    description = "A longsword will follow the player, and launch it self at nearby enemies and deal 150% damage continuously",
     story = "",
     destination = "",
     date = ""

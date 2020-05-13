@@ -152,7 +152,7 @@ buster:addCallback("init", function(player)
     player:setAnimations(sprites)
 
     -- survivor starting stats (health, damage, regen)
-    player:survivorSetInitialStats(130, 7, 0.01)
+    player:survivorSetInitialStats(130, 9, 0.01)
 
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
@@ -189,7 +189,7 @@ end)
 -- Increase character stats on levelup
 buster:addCallback("levelUp", function(player)
     -- (health, damage, regen, armor)
-    player:survivorLevelUpStats(32, 5, 0.001, 2)
+    player:survivorLevelUpStats(32, 4, 0.001, 2)
 end)
 
 -- Change skill 4 description when scepter is picked up

@@ -3,7 +3,7 @@
 
 local item = Item("Fan of Blades")
 
-item.pickupText = "25% on hit to launch a blade that deals more damage the more blades have hit the enemy"
+item.pickupText = "33% on hit to launch a blade that deals more damage the more blades have hit the enemy"
 
 item.sprite = Sprite.load("Items/sprites/knive_blade", 1, 8, 14)
 
@@ -54,7 +54,7 @@ objKnive:addCallback("destroy", function(objKnive)
     local target = objKnive:getData().target
 
     if parent:isValid() and objKnive:getData().explode == true then
-        misc.fireExplosion(objKnive.x, objKnive.y, (objKnive.sprite.width * 3) / 19, (objKnive.sprite.height * 3) / 4, objKniveAc.damage * target:getData().kniveMark , "player" ,nil, nil)
+        misc.fireExplosion(objKnive.x, objKnive.y, (objKnive.sprite.width * 3) / 19, (objKnive.sprite.height * 3) / 4, (objKniveAc.damage * target:getData().kniveMark) * parent:get("damage") , "player" ,nil, nil)
         target:getData().kniveMark = target:getData().kniveMark + 1
     end
 end)
@@ -162,7 +162,7 @@ end)
 
 item:setLog{
     group = "uncommon",
-    description = "25% on hit to launch a blade at the hit enemy. The blade deals 100% + 25% for each prior blade that hit the target",
+    description = "33% on hit to launch a blade at the hit enemy. The blade deals 100% + 25% for each prior blade that hit the target",
     story = "",
     destination = "",
     date = ""

@@ -3,7 +3,7 @@
 
 local item = Item("Bloody Cross")
 
-item.pickupText = "Link all enemies, making them share damage taken by half"
+item.pickupText = "Link all enemies, making them share damage taken by 25%"
 item.sprite = Sprite.load("Items/sprites/hell_chain", 2, 13, 14)
 item:setTier("use")
 item.isUseItem = true
@@ -111,7 +111,7 @@ end)
 
 item:setLog{
     group = "use",
-    description = "Link all enemies on screen. Damaging a linked enemy makes all other linked enemies take half the damage dealt",
+    description = "Link all enemies on screen. Damaging a linked enemy makes all other linked enemies take 25% of the damage dealt",
     story = "",
     destination = "",
     date = ""
