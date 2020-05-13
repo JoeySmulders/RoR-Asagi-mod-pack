@@ -54,7 +54,7 @@ objKnive:addCallback("destroy", function(objKnive)
     local target = objKnive:getData().target
 
     if parent:isValid() and objKnive:getData().explode == true then
-        parent:fireExplosion(objKnive.x, objKnive.y, (objKnive.sprite.width * 3) / 19, (objKnive.sprite.height * 3) / 4, objKniveAc.damage * target:getData().kniveMark , nil, nil, DAMAGER_NO_PROC)
+        misc.fireExplosion(objKnive.x, objKnive.y, (objKnive.sprite.width * 3) / 19, (objKnive.sprite.height * 3) / 4, objKniveAc.damage * target:getData().kniveMark , "player" ,nil, nil)
         target:getData().kniveMark = target:getData().kniveMark + 1
     end
 end)
@@ -127,7 +127,7 @@ registercallback("preHit", function(bullet, hit)
                 count = player:countItem(item)
 
                 if count > 0 then
-                    if math.chance(25) then -- TODO: SYNC THIS
+                    if math.chance(33) then
                         local knive = objKnive:create(player.x, player.y)
                         knive:set("parent", player.id)
                         knive:getData().initialTimer = 10

@@ -51,9 +51,9 @@ registercallback("preHit", function(bullet, hit)
                 local damage = 0
                 -- deal full damage if embryo procced
                 if enemy:getData().linkedEmbryo == true then
-                    damage = bullet:get("damage")
-                else
                     damage = bullet:get("damage") / 2
+                else
+                    damage = bullet:get("damage") / 4
                 end
 
                 enemy:set("hp", enemy:get("hp") - damage)

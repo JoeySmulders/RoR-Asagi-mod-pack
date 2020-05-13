@@ -26,14 +26,9 @@ end)
 objPlant:addCallback("destroy", function(objPlant)
     objPlantAc = objPlant:getAccessor()
     local parent = Object.findInstance(objPlantAc.parent)
-
-    -- Set the parent damage and stun to 1 then revert it back to their actual damage to get around needing an actorInstance to fire an explosion I guess
-    local revertDamage = parent:get("damage")
-    parent:set("damage", 1)
-    parent:set("stun", 1.33)
-    parent:fireExplosion(objPlant.x, objPlant.y, (objPlant.sprite.width) / 19, (objPlant.sprite.height) / 4, objPlantAc.damage, nil, nil, DAMAGER_NO_PROC + DAMAGER_NO_RECALC)
-    parent:set("damage", revertDamage)
-    parent:set("stun", 0)
+    
+    local explosion = misc.fireExplosion(objPlant.x, objPlant.y, (objPlant.sprite.width) / 19, (objPlant.sprite.height) / 4, objPlantAc.damage, "player")
+    explosion:set("stun", 1.33)
 end)
 
 objPlant:addCallback("step", function(objPlant)

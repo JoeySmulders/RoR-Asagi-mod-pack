@@ -50,7 +50,7 @@ objExplode:addCallback("create", function(objExplode)
 	objExplodeAc.life = 5 * 60
 	objExplodeAc.speed = 0
 	objExplodeAc.size = 1
-	objExplodeAc.damage = 2.5
+	objExplodeAc.damage = 1
     objExplode.spriteSpeed = 0.25
     objExplode:getData().velocity = -4
 end)
@@ -86,7 +86,7 @@ objExplode:addCallback("step", function(objExplode)
         if objExplode:getData().sticky == true then
             objExplode.x = enemy.x + objExplode:getData().stickyOffset
             objExplode.y = enemy.y + objExplode:getData().stickyOffset
-            objExplodeAc.damage = 7.5
+            objExplodeAc.damage = 3
             if objExplode:getData().stickied ~= true then
                 objExplodeAc.life = 2 * 60
                 objExplode:getData().stickied = true
@@ -118,11 +118,11 @@ This survivor focuses on using positioning and timing to deliver high damage at 
 
 -- Character select skill descriptions
 buster:setLoadoutSkill(1, "Blast Strike", 
-[[Charge up a strike and release it to deal &y&up to 1000% damage&!&.
+[[Charge up a strike and release it to deal &y&up to 500% damage&!&.
 The attack can be &b&charged during other actions&!&, but deals &r&self damage if left at full charge&!&.]])
 
 buster:setLoadoutSkill(2, "Blazing Slam", 
-[[Immediately drop down and slam the ground, dealing &y&up to 750% damage&!& based on distance fallen.
+[[Immediately drop down and slam the ground, dealing &y&up to 300% damage&!& based on distance fallen.
 On impact, &y&launches enemies into the air&!& while setting them &y&ablaze for 30% of the damage dealt&!&.]])
 
 buster:setLoadoutSkill(3, "Slide Boost", 
@@ -130,7 +130,7 @@ buster:setLoadoutSkill(3, "Slide Boost",
 &b&Instantly charges Blast Strike to full&!& when used while charging, and &b&jumping cancels the slide&!&.]])
 
 buster:setLoadoutSkill(4, "Explosive Scarf", 
-[[Release &y&10 explosives&!& around you that will detonate when hitting the ground or an enemy for &y&250% damage each&!&.]])
+[[Release &y&10 explosives&!& around you that will detonate when hitting the ground or an enemy for &y&100% damage each&!&.]])
 
 -- Extra menu sprite
 buster.idleSprite = sprites.idle
@@ -152,19 +152,19 @@ buster:addCallback("init", function(player)
     player:setAnimations(sprites)
 
     -- survivor starting stats (health, damage, regen)
-    player:survivorSetInitialStats(130, 9, 0.01)
+    player:survivorSetInitialStats(130, 7, 0.01)
 
     -- set player skill icons (last number is cooldown in frames)
     player:setSkill(1,
     "Blast Strike",
-    "Charge up a strike for up to 1000% damage",
+    "Charge up a strike for up to 500% damage",
     sprSkills, 1,
     0.5 * 60
     )
 
     player:setSkill(2,
     "Blazing Slam",
-    "Slam into the ground for up to 600% damage, knocking up enemies and setting them ablaze",
+    "Slam into the ground for up to 300% damage, knocking up enemies and setting them ablaze",
     sprSkills, 2,
     5 * 60
     )
@@ -178,7 +178,7 @@ buster:addCallback("init", function(player)
 
     player:setSkill(4,
     "Explosive Scarf",
-    "Release 10 explosives around you, detonating after hitting the ground or an enemy for 250% damage",
+    "Release 10 explosives around you, detonating after hitting the ground or an enemy for 100% damage",
     sprSkills, 4,
     10 * 60
     )
@@ -196,7 +196,7 @@ end)
 buster:addCallback("scepter", function(player)
     player:setSkill(4,
     "Sticky Explosive Scarf",
-    "Release 10 explosives around you, detonating after hitting the ground for 250% damage or sticking to enemies for 750% damage",
+    "Release 10 explosives around you, detonating after hitting the ground for 100% damage or sticking to enemies for 300% damage",
     sprSkills, 5,
     10 * 60
     )
@@ -346,7 +346,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                     
                     -- Deal more damage based on how charged the attack is
                     if player:getData().blastCharge >= 180 then
-                        damage = 10
+                        damage = 5
                         audio = 2
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast4left
@@ -355,7 +355,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                         end
                         
                     elseif player:getData().blastCharge > 120 then
-                        damage = 7.5
+                        damage = 3
                         audio = 1.5
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast3left
@@ -364,7 +364,7 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                         end
 
                     elseif player:getData().blastCharge > 60 then
-                        damage = 5
+                        damage = 2
                         audio = 1.25
                         if player:getFacingDirection() == 180 then
                             sprite = sprBlast2left
@@ -413,19 +413,19 @@ buster:addCallback("onSkill", function(player, skill, relevantFrame)
                 end
             end
 
-            local damage = 2.5 + (i / 30)
+            local damage = 1 + (i / 75)
 
             local bullet = player:fireExplosion(player.x, player.y, sprSlamDunk.width / 19, sprSlamDunk.height / 4, damage, sprSlamDunk, sprSparks7)
             bullet.spriteSpeed = 0.2
 
-            -- If starstorm is loaded set enemies on fire
+            -- If starstorm is loaded set enemies on fire, maybe make it do more damage without it but ehhhhh why aren't you using it
             if modloader.checkMod("StarStorm") then
                 DOT.addToDamager(bullet, DOT_FIRE, player:get("damage") * damage * 0.3, 3, "Slam", false)
             end
 
             -- Knockup enemies based on the damage done and shake the screen
             --bullet:set("blaze", 1) don't use this it gives errors
-            bullet:set("knockup", (damage * 2))
+            bullet:set("knockup", (damage * 4))
             misc.shakeScreen(10)
 
             sBusterSkill2:play(0.9 + math.random() * 0.2, 1.75)

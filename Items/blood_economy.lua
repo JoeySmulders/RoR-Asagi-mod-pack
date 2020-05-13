@@ -3,7 +3,7 @@
 
 local item = Item("Blood Economy")
 
-item.pickupText = "Gain 10% of damage dealt or taken as gold"
+item.pickupText = "Gain 5% of damage dealt or taken as gold"
 
 item.sprite = Sprite.load("Items/sprites/Blood_economy", 1, 12, 13)
 
@@ -68,13 +68,13 @@ end)
 
 function createGold (player, bullet, hit, count)
     if hit:get("hp") > 0 then
-        bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.1), 0, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
+        bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.05), 0, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
     end
 end
 
 item:setLog{
     group = "uncommon",
-    description = "Gain 10% of damage dealt or taken as gold. Dying spawns an item chest",
+    description = "Gain 5% of damage dealt or taken as gold. Dying spawns an item chest",
     story = "",
     destination = "",
     date = ""
