@@ -81,8 +81,7 @@ registercallback("onPlayerStep", function(player)
     local count = player:countItem(item)
     
     if count > 0 then
-
-        -- TODO: Make the item work with controller? (use the moveLeft and moveRight variables)
+        
         if player:get("activity") == 30 then
             player:set("bamboo_boost", 0)
             player:getData().hatRopeTimer = 5

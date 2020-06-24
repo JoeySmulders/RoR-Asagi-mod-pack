@@ -68,7 +68,7 @@ end)
 
 function createGold (player, bullet, hit, count)
     if hit:get("hp") > 0 then
-        bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.05), 0, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
+        bullet:set("gold_on_hit", math.clamp(math.sqrt(bullet:get("damage") * count * 0.05), 1, math.sqrt(hit:get("hp")))) -- gold_on_hit produces the number squared amount of coins
     end
 end
 

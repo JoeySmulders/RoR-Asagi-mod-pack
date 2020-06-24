@@ -10,14 +10,11 @@ local magmaWorm = MonsterCard.find("Magma Worm", "Vanilla")
 local wormHead = Object.find("WormHead", "Vanilla")
 local wormBody = Object.find("WormBody", "Vanilla")
 
-
--- Maybe do this on gamestart?
 magmaWorm.eliteTypes:add(elite.Freezing)
 
-local freezeTimer = 2 * 60
+local freezeTimer = 1 * 60
 local freezeImmune = 5 * 60
 
--- TODO: Check out why this is crashing some people
 -- TODO: turn the freeze into a debuff instead of hardcoded
 -- TODO: have an actual sprite for the Freezing magma worm instead of just adding a color
 

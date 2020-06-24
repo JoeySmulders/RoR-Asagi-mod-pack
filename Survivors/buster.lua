@@ -119,18 +119,18 @@ This survivor focuses on using positioning and timing to deliver high damage at 
 -- Character select skill descriptions
 buster:setLoadoutSkill(1, "Blast Strike", 
 [[Charge up a strike and release it to deal &y&up to 500% damage&!&.
-The attack can be &b&charged during other actions&!&, but deals &r&self damage if left at full charge&!&.]])
+Can be &b&charged during other actions&!&, but deals &r&self damage at full charge&!&.]])
 
 buster:setLoadoutSkill(2, "Blazing Slam", 
-[[Immediately drop down and slam the ground, dealing &y&up to 300% damage&!& based on distance fallen.
-On impact, &y&launches enemies into the air&!& while setting them &y&ablaze for 30% of the damage dealt&!&.]])
+[[Drop down and slam the ground, dealing &y&up to 300% damage&!& based on distance.
+&y&Launches enemies into the air&!& and set them &y&ablaze for 30% of the damage&!&.]])
 
 buster:setLoadoutSkill(3, "Slide Boost", 
 [[&y&Slide a short distance&!& in the direction you are walking, or &y&up into the air&!& while not moving.
 &b&Instantly charges Blast Strike to full&!& when used while charging, and &b&jumping cancels the slide&!&.]])
 
 buster:setLoadoutSkill(4, "Explosive Scarf", 
-[[Release &y&10 explosives&!& around you that will detonate when hitting the ground or an enemy for &y&100% damage each&!&.]])
+[[Release &y&10 explosives&!& that detonate when hitting the ground or an enemy for &y&100% damage&!&.]])
 
 -- Extra menu sprite
 buster.idleSprite = sprites.idle
